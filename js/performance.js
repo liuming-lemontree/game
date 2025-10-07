@@ -140,7 +140,7 @@ class PerformanceManager {
     setupVirtualScrolling(container) {
         // 虚拟滚动实现（简化版）
         const items = Array.from(container.children);
-        const itemHeight = items[0]?.offsetHeight || 100;
+        const itemHeight = items[0] && items[0].offsetHeight || 100;
         const visibleCount = Math.ceil(container.offsetHeight / itemHeight) + 2;
 
         let startIndex = 0;

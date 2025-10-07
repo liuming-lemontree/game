@@ -55,7 +55,7 @@ class AchievementSystem {
                 icon: '📞',
                 color: '#17a2b8',
                 type: 'category',
-                condition: (progress) => progress.categoryProgress.phone?.completed === 6,
+                condition: (progress) => progress.categoryProgress && progress.categoryProgress.phone && progress.categoryProgress.phone.completed === 6,
                 points: 80
             },
             'sms_master': {
@@ -65,7 +65,7 @@ class AchievementSystem {
                 icon: '📱',
                 color: '#6610f2',
                 type: 'category',
-                condition: (progress) => progress.categoryProgress.sms?.completed === 6,
+                condition: (progress) => progress.categoryProgress && progress.categoryProgress.sms && progress.categoryProgress.sms.completed === 6,
                 points: 80
             },
             'network_master': {
@@ -75,7 +75,7 @@ class AchievementSystem {
                 icon: '🌐',
                 color: '#20c997',
                 type: 'category',
-                condition: (progress) => progress.categoryProgress.network?.completed === 7,
+                condition: (progress) => progress.categoryProgress && progress.categoryProgress.network && progress.categoryProgress.network.completed === 7,
                 points: 100
             },
             'social_master': {
@@ -85,7 +85,7 @@ class AchievementSystem {
                 icon: '👥',
                 color: '#fd7e14',
                 type: 'category',
-                condition: (progress) => progress.categoryProgress.social?.completed === 6,
+                condition: (progress) => progress.categoryProgress && progress.categoryProgress.social && progress.categoryProgress.social.completed === 6,
                 points: 80
             },
 
@@ -97,7 +97,7 @@ class AchievementSystem {
                 icon: '🛡️',
                 color: '#28a745',
                 type: 'difficulty',
-                condition: (progress) => progress.difficultyProgress.easy?.completed === 6,
+                condition: (progress) => progress.difficultyProgress && progress.difficultyProgress.easy && progress.difficultyProgress.easy.completed === 6,
                 points: 60
             },
             'medium_champion': {
@@ -107,7 +107,7 @@ class AchievementSystem {
                 icon: '⚔️',
                 color: '#ffc107',
                 type: 'difficulty',
-                condition: (progress) => progress.difficultyProgress.medium?.completed === 14,
+                condition: (progress) => progress.difficultyProgress && progress.difficultyProgress.medium && progress.difficultyProgress.medium.completed === 14,
                 points: 120
             },
             'hard_legend': {
@@ -117,7 +117,7 @@ class AchievementSystem {
                 icon: '🔥',
                 color: '#dc3545',
                 type: 'difficulty',
-                condition: (progress) => progress.difficultyProgress.hard?.completed === 5,
+                condition: (progress) => progress.difficultyProgress && progress.difficultyProgress.hard && progress.difficultyProgress.hard.completed === 5,
                 points: 150
             },
 
@@ -341,7 +341,7 @@ class AchievementSystem {
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             z-index: 10000;
-            max-width: 350px;
+            max-width: 233px;
             transform: translateX(400px);
             transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         `;
@@ -415,7 +415,7 @@ class AchievementSystem {
         const totalAchievements = Object.keys(this.achievements).length;
         const unlockedCount = this.userAchievements.size;
         const totalPoints = Array.from(this.userAchievements)
-            .map(id => this.achievements[id]?.points || 0)
+            .map(id => (this.achievements[id] && this.achievements[id].points) || 0)
             .reduce((sum, points) => sum + points, 0);
 
         const typeStats = {};

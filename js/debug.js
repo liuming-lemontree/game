@@ -250,9 +250,9 @@ class DebugManager {
 
                 storageEl.innerHTML = `
                     <div>游戏数据: ${gameData ? '已加载' : '未加载'}</div>
-                    <div>最高分: ${gameData?.highScore || 0}</div>
-                    <div>完成关卡: ${gameData?.completedLevels || 0}</div>
-                    <div>成就数量: ${achievements?.length || 0}</div>
+                    <div>最高分: ${gameData && gameData.highScore || 0}</div>
+                    <div>完成关卡: ${gameData && gameData.completedLevels || 0}</div>
+                    <div>成就数量: ${achievements && achievements.length || 0}</div>
                     <div>LocalStorage: ${typeof Storage !== 'undefined' ? '可用' : '不可用'}</div>
                 `;
             } catch (error) {

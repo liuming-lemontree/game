@@ -565,7 +565,7 @@ class LearningPathSystem {
             padding: 0;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             z-index: 10000;
-            max-width: 600px;
+            max-width: 400px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;

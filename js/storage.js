@@ -253,7 +253,7 @@ class StorageManager {
                     break;
 
                 case 'correct_by_type':
-                    shouldUnlock = gameData.statistics[achievement.condition.category]?.correct >= achievement.condition.value;
+                    shouldUnlock = gameData.statistics[achievement.condition.category] && gameData.statistics[achievement.condition.category].correct >= achievement.condition.value;
                     break;
 
                 case 'total_score':
@@ -450,6 +450,12 @@ class StorageManager {
         console.log('云恢复功能暂未实现');
     }
 }
+
+// 创建全局实例
+const storage = new StorageManager();
+
+// 为了向后兼容，同时将实例赋值给window对象
+window.storage = storage;
 
 // 导出类供初始化管理器使用
 // 全局实例将由初始化管理器创建

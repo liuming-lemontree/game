@@ -1,94 +1,250 @@
 // 游戏核心逻辑
 class AntiFraudGame {
     constructor() {
-        this.currentScreen = 'main-menu';
-        this.currentScenario = null;
-        this.currentScore = 0;
-        this.currentLevel = 1;
-        this.streak = 0; // 连续答对次数
-        this.totalAttempts = 0;
-        this.correctAnswers = 0;
-        this.scenarioManager = new ScenarioManager();
-        this.sessionStartTime = null;
-        this.sessionScenarios = [];
+        try {
+            this.currentScreen = 'main-menu';
+            this.currentScenario = null;
+            this.currentScore = 0;
+            this.currentLevel = 1;
+            this.streak = 0; // 连续答对次数
+            this.totalAttempts = 0;
+            this.correctAnswers = 0;
+            
+            // 添加防御性检查，确保EnhancedScenarioManager可用
+            try {
+                this.scenarioManager = typeof EnhancedScenarioManager !== 'undefined' ? new EnhancedScenarioManager() : null;
+                if (!this.scenarioManager && typeof window.enhancedScenarioManager !== 'undefined') {
+                    this.scenarioManager = window.enhancedScenarioManager;
+                }
+            } catch (error) {
+                console.warn('创建EnhancedScenarioManager实例失败:', error);
+                this.scenarioManager = null;
+            }
+            
+            this.sessionStartTime = null;
+            this.sessionScenarios = [];
+            this.gameSettings = {
+                soundEnabled: true,
+                vibrationEnabled: true,
+                difficulty: 'mixed',
+                language: 'zh-CN'
+            };
 
-        this.initializeGame();
-        this.bindEvents();
+            // 延迟初始化，确保DOM完全加载
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => this.initializeGame());
+            } else {
+                setTimeout(() => this.initializeGame(), 100); // 延迟一点时间确保DOM完全准备好
+            }
+        } catch (error) {
+            console.error('AntiFraudGame构造函数出错:', error);
+            // 即使构造函数出错，也要确保backToMenu方法可用
+            this.backToMenu = function() {
+                console.log('返回主菜单方法被调用');
+                // 尝试切换到主菜单
+                const screens = document.querySelectorAll('.screen');
+                if (screens) {
+                    screens.forEach(screen => {
+                        if (screen && screen.classList) {
+                            screen.classList.remove('active');
+                        }
+                    });
+                }
+                
+                const mainMenu = document.getElementById('main-menu');
+                if (mainMenu && mainMenu.classList) {
+                    mainMenu.classList.add('active');
+                }
+            };
+        }
     }
 
     initializeGame() {
-        // 隐藏加载屏幕
-        setTimeout(() => {
-            const loadingScreen = document.getElementById('loading');
-            if (loadingScreen) {
-                loadingScreen.style.display = 'none';
+        try {
+            // 绑定事件
+            try {
+                this.bindEvents();
+            } catch (error) {
+                console.error('绑定事件时出错:', error);
             }
-        }, 1000);
+            
+            // 隐藏加载屏幕
+            setTimeout(() => {
+                try {
+                    const loadingScreen = document.getElementById('loading');
+                    if (loadingScreen) {
+                        loadingScreen.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('隐藏加载屏幕时出错:', error);
+                }
+            }, 1000);
 
-        // 更新主菜单统计数据
-        this.updateMainMenuStats();
+            // 更新主菜单统计数据（仅当相关DOM元素存在时）
+            try {
+                if (document.getElementById('high-score') && document.getElementById('completed-levels')) {
+                    this.updateMainMenuStats();
+                }
+            } catch (error) {
+                console.error('更新主菜单统计数据时出错:', error);
+            }
 
-        // 初始化游戏设置
-        this.loadGameSettings();
+            // 初始化游戏设置
+            try {
+                this.loadGameSettings();
+            } catch (error) {
+                console.error('初始化游戏设置时出错:', error);
+            }
 
-        // 检查首次访问
-        this.checkFirstVisit();
+            // 检查首次访问
+            try {
+                this.checkFirstVisit();
+            } catch (error) {
+                console.error('检查首次访问时出错:', error);
+            }
+
+            // 添加游戏样式
+            try {
+                this.addGameStyles();
+            } catch (error) {
+                console.error('添加游戏样式时出错:', error);
+            }
+        } catch (error) {
+            console.error('游戏初始化时出错:', error);
+        }
     }
 
     bindEvents() {
-        // 监听屏幕方向变化
-        window.addEventListener('orientationchange', () => {
-            this.handleOrientationChange();
-        });
+        try {
+            // 监听屏幕方向变化
+            window.addEventListener('orientationchange', () => {
+                try {
+                    this.handleOrientationChange();
+                } catch (error) {
+                    console.error('处理屏幕方向变化时出错:', error);
+                }
+            });
 
-        // 监听页面可见性变化
-        document.addEventListener('visibilitychange', () => {
-            this.handleVisibilityChange();
-        });
+            // 监听页面可见性变化
+            document.addEventListener('visibilitychange', () => {
+                try {
+                    this.handleVisibilityChange();
+                } catch (error) {
+                    console.error('处理页面可见性变化时出错:', error);
+                }
+            });
 
-        // 防止意外关闭页面时丢失进度
-        window.addEventListener('beforeunload', (e) => {
-            if (this.currentScreen === 'game-screen' && this.sessionStartTime) {
-                e.preventDefault();
-                e.returnValue = '游戏正在进行中，确定要离开吗？';
-            }
-        });
+            // 防止意外关闭页面时丢失进度
+            window.addEventListener('beforeunload', (e) => {
+                try {
+                    if (this.currentScreen === 'game-screen' && this.sessionStartTime) {
+                        e.preventDefault();
+                        e.returnValue = '游戏正在进行中，确定要离开吗？';
+                    }
+                } catch (error) {
+                    console.error('处理页面关闭事件时出错:', error);
+                }
+            });
+        } catch (error) {
+            console.error('绑定事件时出错:', error);
+        }
     }
 
     // 屏幕切换
     switchScreen(screenId) {
-        const screens = document.querySelectorAll('.screen');
-        screens.forEach(screen => {
-            screen.classList.remove('active');
-        });
-
-        const targetScreen = document.getElementById(screenId);
-        if (targetScreen) {
-            targetScreen.classList.add('active');
-            this.currentScreen = screenId;
-
-            // 屏幕切换后的特殊处理
-            if (screenId === 'achievements-screen') {
-                this.loadAchievements();
-            } else if (screenId === 'tutorial-screen') {
-                tutorial.showCategory('phone'); // 默认显示电话诈骗教程
+        try {
+            // 隐藏所有屏幕
+            const screens = document.querySelectorAll('.screen');
+            if (screens) {
+                screens.forEach(screen => {
+                    if (screen && screen.classList) {
+                        screen.classList.remove('active');
+                    }
+                });
             }
-            
-            // 更新触控增强元素
-            this.updateTouchEnhancements();
+
+            // 激活目标屏幕
+            const targetScreen = document.getElementById(screenId);
+            if (targetScreen && targetScreen.classList) {
+                targetScreen.classList.add('active');
+                this.currentScreen = screenId;
+
+                // 屏幕切换后的特殊处理
+                try {
+                    if (screenId === 'achievements-screen') {
+                        this.loadAchievements();
+                    } else if (screenId === 'tutorial-screen') {
+                        if (window.tutorial && typeof window.tutorial.showCategory === 'function') {
+                            tutorial.showCategory('phone'); // 默认显示电话诈骗教程
+                        }
+                    }
+                } catch (error) {
+                    console.error('屏幕切换后处理出错:', error);
+                }
+                
+                // 更新触控增强元素
+                try {
+                    this.updateTouchEnhancements();
+                } catch (error) {
+                    console.error('更新触控增强元素时出错:', error);
+                }
+            }
+        } catch (error) {
+            console.error('切换屏幕时出错:', error);
+        }
+    }
+
+    // 显示加载动画
+    showLoadingAnimation() {
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.id = 'loading-overlay';
+        loadingOverlay.innerHTML = `
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p>正在加载游戏场景...</p>
+            </div>
+        `;
+        document.body.appendChild(loadingOverlay);
+
+        // 2秒后自动隐藏加载动画
+        setTimeout(() => {
+            this.hideLoadingAnimation();
+        }, 2000);
+    }
+
+    // 隐藏加载动画
+    hideLoadingAnimation() {
+        const loadingOverlay = document.getElementById('loading-overlay');
+        if (loadingOverlay) {
+            loadingOverlay.remove();
         }
     }
 
     // 开始游戏
     startGame() {
-        this.currentScore = 0;
-        this.currentLevel = 1;
-        this.streak = 0;
-        this.sessionStartTime = new Date();
-        this.sessionScenarios = [];
+        // 添加按钮点击反馈
+        const startButton = document.querySelector('.btn-primary[onclick*="startGame"]');
+        if (startButton) {
+            startButton.classList.add('clicked');
+            setTimeout(() => {
+                startButton.classList.remove('clicked');
+            }, 300);
+        }
 
-        this.switchScreen('game-screen');
-        this.loadScenario();
+        // 显示加载动画
+        this.showLoadingAnimation();
+
+        // 延迟执行游戏开始逻辑，让用户看到反馈
+        setTimeout(() => {
+            this.currentScore = 0;
+            this.currentLevel = 1;
+            this.streak = 0;
+            this.sessionStartTime = new Date();
+            this.sessionScenarios = [];
+
+            this.switchScreen('game-screen');
+            this.loadScenario();
+        }, 500);
     }
 
     // 加载场景
@@ -488,8 +644,8 @@ class AntiFraudGame {
         const gameData = storage.getGameData();
 
         // 更新统计数据
-        document.getElementById('total-score').textContent = gameData?.totalScore || 0;
-        document.getElementById('total-levels').textContent = gameData?.completedLevels || 0;
+        document.getElementById('total-score').textContent = gameData && gameData.totalScore || 0;
+        document.getElementById('total-levels').textContent = gameData && gameData.completedLevels || 0;
         document.getElementById('accuracy-rate').textContent = storage.calculateAccuracy() + '%';
 
         // 渲染成就徽章
@@ -532,15 +688,23 @@ class AntiFraudGame {
     updateMainMenuStats() {
         const gameData = storage.getGameData();
         if (gameData) {
-            document.getElementById('high-score').textContent = gameData.highScore || 0;
-            document.getElementById('completed-levels').textContent = gameData.completedLevels || 0;
+            const highScoreElement = document.getElementById('high-score');
+            const completedLevelsElement = document.getElementById('completed-levels');
+            
+            if (highScoreElement) {
+                highScoreElement.textContent = gameData.highScore || 0;
+            }
+            
+            if (completedLevelsElement) {
+                completedLevelsElement.textContent = gameData.completedLevels || 0;
+            }
         }
     }
 
     // 游戏设置
     loadGameSettings() {
         const gameData = storage.getGameData();
-        if (gameData?.gameSettings) {
+        if (gameData && gameData.gameSettings) {
             // 应用设置
             this.gameSettings = gameData.gameSettings;
         } else {
@@ -555,62 +719,92 @@ class AntiFraudGame {
 
     // 首次访问检查
     checkFirstVisit() {
-        const gameData = storage.getGameData();
-        if (!gameData || !gameData.tutorialShown) {
-            // 显示教程介绍
-            this.showTutorialIntro();
+        try {
+            const gameData = storage.getGameData();
+            if (!gameData || !gameData.tutorialShown) {
+                // 确保DOM已准备就绪后再显示教程介绍
+                if (document && document.body) {
+                    this.showTutorialIntro();
+                } else {
+                    console.warn('DOM尚未完全准备就绪，延迟显示教程介绍');
+                    setTimeout(() => this.checkFirstVisit(), 100);
+                }
+            }
+        } catch (error) {
+            console.error('检查首次访问时出错:', error);
         }
     }
 
     showTutorialIntro() {
-        const introHTML = `
-            <div class="tutorial-intro">
-                <div class="intro-content">
-                    <h2>🎓 欢迎来到反诈先锋</h2>
-                    <p>这是一个专门教你防范电信诈骗的教育游戏。</p>
-                    <div class="intro-features">
-                        <div class="feature-item">
-                            <span class="feature-icon">📱</span>
-                            <span class="feature-text">学习识别各种诈骗手段</span>
+        try {
+            const introHTML = `
+                <div class="tutorial-intro">
+                    <div class="intro-content">
+                        <h2>🎓 欢迎来到反诈先锋</h2>
+                        <p>这是一个专门教你防范电信诈骗的教育游戏。</p>
+                        <div class="intro-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">📱</span>
+                                <span class="feature-text">学习识别各种诈骗手段</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🎯</span>
+                                <span class="feature-text">通过场景模拟实战演练</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🏆</span>
+                                <span class="feature-text">解锁成就徽章</span>
+                            </div>
                         </div>
-                        <div class="feature-item">
-                            <span class="feature-icon">🎯</span>
-                            <span class="feature-text">通过场景模拟实战演练</span>
+                        <div class="intro-actions">
+                            <button class="btn btn-primary" onclick="game.closeTutorialIntro()">开始学习</button>
+                            <button class="btn btn-secondary" onclick="game.viewTutorial()">先看教程</button>
                         </div>
-                        <div class="feature-item">
-                            <span class="feature-icon">🏆</span>
-                            <span class="feature-text">解锁成就徽章</span>
-                        </div>
-                    </div>
-                    <div class="intro-actions">
-                        <button class="btn btn-primary" onclick="game.closeTutorialIntro()">开始学习</button>
-                        <button class="btn btn-secondary" onclick="game.viewTutorial()">先看教程</button>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
 
-        const introDiv = document.createElement('div');
-        introDiv.id = 'tutorial-intro';
-        introDiv.innerHTML = introHTML;
-        document.body.appendChild(introDiv);
+            if (document && document.body) {
+                const introDiv = document.createElement('div');
+                introDiv.id = 'tutorial-intro';
+                introDiv.innerHTML = introHTML;
+                document.body.appendChild(introDiv);
 
-        setTimeout(() => {
-            introDiv.classList.add('show');
-        }, 100);
+                setTimeout(() => {
+                    if (introDiv && introDiv.classList) {
+                        introDiv.classList.add('show');
+                    }
+                }, 100);
+            }
+        } catch (error) {
+            console.error('显示教程介绍时出错:', error);
+        }
     }
 
     closeTutorialIntro() {
-        const introDiv = document.getElementById('tutorial-intro');
-        if (introDiv) {
-            introDiv.classList.remove('show');
-            setTimeout(() => {
-                document.body.removeChild(introDiv);
-            }, 300);
+        try {
+            const introDiv = document.getElementById('tutorial-intro');
+            if (introDiv) {
+                if (introDiv.classList) {
+                    introDiv.classList.remove('show');
+                }
+                setTimeout(() => {
+                    try {
+                        const currentIntroDiv = document.getElementById('tutorial-intro');
+                        if (currentIntroDiv && document.body) {
+                            document.body.removeChild(currentIntroDiv);
+                        }
+                    } catch (innerError) {
+                        console.error('移除教程介绍时出错:', innerError);
+                    }
+                }, 300);
+            }
+            
+            // 标记教程已显示
+            storage.updateGameData({ tutorialShown: true });
+        } catch (error) {
+            console.error('关闭教程介绍时出错:', error);
         }
-
-        // 标记教程已显示
-        storage.updateGameData({ tutorialShown: true });
     }
 
     viewTutorial() {
@@ -633,11 +827,11 @@ class AntiFraudGame {
             // 页面显示时恢复游戏
             console.log('游戏已恢复');
         }
-    }
-}
+    } // 结束handleVisibilityChange方法
 
-// 添加额外样式
-const gameStyles = `
+    // 添加游戏样式
+    addGameStyles() {
+        const gameStyles = `
 <style>
 .game-results, .game-complete {
     text-align: center;
@@ -751,7 +945,7 @@ const gameStyles = `
     opacity: 0;
     transform: translateX(100%);
     transition: all 0.3s ease;
-    min-width: 300px;
+    min-width: 200px;
     max-width: 90vw;
 }
 
@@ -826,7 +1020,7 @@ const gameStyles = `
     border-radius: 16px;
     padding: 32px;
     margin: 20px;
-    max-width: 400px;
+    max-width: 267px;
     text-align: center;
 }
 
@@ -854,52 +1048,30 @@ const gameStyles = `
     gap: 12px;
 }
 
-.feature-icon {
-    font-size: 20px;
-    flex-shrink: 0;
-}
-
-.feature-text {
-    font-size: 14px;
-    color: #555;
-}
-
-.intro-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-@media (max-width: 480px) {
-    .results-stats {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-
-    .results-actions {
-        flex-direction: column;
-    }
-
-    .achievement-notification {
-        right: 10px;
-        left: 10px;
-        min-width: auto;
-    }
-
-    .intro-content {
-        margin: 10px;
-        padding: 24px;
-    }
-
-    .intro-actions {
-        flex-direction: column;
-    }
-}
 </style>
 `;
+        
+        // 添加样式到页面头部
+        document.head.insertAdjacentHTML('beforeend', gameStyles);
+    } // 结束addGameStyles方法
 
-// 将样式添加到页面
-document.head.insertAdjacentHTML('beforeend', gameStyles);
+} // 结束AntiFraudGame类
 
-// 导出类供初始化管理器使用
-// 全局实例将由初始化管理器创建
+// 确保AntiFraudGame在全局范围内可用
+if (typeof window !== 'undefined') {
+    window.AntiFraudGame = AntiFraudGame;
+    
+    // 初始化游戏实例
+    try {
+        window.game = new AntiFraudGame();
+    } catch (error) {
+        console.error('初始化游戏实例失败:', error);
+        // 确保即使初始化失败也有基本的game对象
+        window.game = {
+            backToMenu: function() {
+                alert('返回主菜单');
+                window.history.back();
+            }
+        };
+    }
+}
