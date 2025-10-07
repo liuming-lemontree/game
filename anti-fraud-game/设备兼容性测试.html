@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>设备兼容性测试 - 反诈先锋</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .device-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .info-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .info-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .test-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .test-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .test-btn:active {
+            transform: translateY(0);
+        }
+        .test-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .interaction-area {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .interaction-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            min-width: 120px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .interaction-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .interaction-btn:active {
+            transform: scale(0.98);
+        }
+        .feedback-log {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-success { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-error { background: #dc3545; }
+        .status-info { background: #17a2b8; }
+        .quick-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .quick-link {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .quick-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; margin-bottom: 30px;">📱 设备兼容性测试</h1>
+
+    <div class="quick-links">
+        <a href="./index.html" class="quick-link" target="_blank">🎮 游戏主页</a>
+        <a href="./test.html" class="quick-link" target="_blank">🧪 基础测试</a>
+        <a href="./完整测试.html" class="quick-link" target="_blank">📊 完整测试</a>
+    </div>
+
+    <div class="test-container">
+        <h2>📊 设备信息</h2>
+        <div class="device-info" id="device-info">
+            <div class="info-item">
+                <div class="info-label">设备类型</div>
+                <div class="info-value" id="device-type">检测中...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">触摸支持</div>
+                <div class="info-value" id="touch-support">检测中...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">鼠标支持</div>
+                <div class="info-value" id="mouse-support">检测中...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">屏幕方向</div>
+                <div class="info-value" id="orientation">检测中...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">屏幕尺寸</div>
+                <div class="info-value" id="screen-size">检测中...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">像素比</div>
+                <div class="info-value" id="pixel-ratio">检测中...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>🧪 交互测试</h2>
+        <div class="test-buttons">
+            <button class="test-btn" onclick="testButtonClicks()">
+                🖱️ 测试按钮点击
+            </button>
+            <button class="test-btn" onclick="testTouchSimulation()">
+                👆 测试触摸模拟
+            </button>
+            <button class="test-btn" onclick="testHoverEffects()">
+                ✨ 测试悬停效果
+            </button>
+            <button class="test-btn" onclick="testResponsiveLayout()">
+                📐 测试响应式布局
+            </button>
+        </div>
+
+        <div class="interaction-area" id="interaction-area">
+            <button class="interaction-btn" onclick="logInteraction('按钮1点击')">按钮 1</button>
+            <button class="interaction-btn" onclick="logInteraction('按钮2点击')">按钮 2</button>
+            <button class="interaction-btn" onclick="logInteraction('按钮3点击')">按钮 3</button>
+            <button class="interaction-btn" onclick="logInteraction('按钮4点击')">按钮 4</button>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>📝 测试反馈日志</h2>
+        <div class="feedback-log" id="feedback-log">
+            等待测试开始...
+        </div>
+    </div>
+
+    <!-- 加载必要的脚本 -->
+    <script src="js/device-adaptation.js"></script>
+
+    <script>
+        let interactionCount = 0;
+        let testStartTime = Date.now();
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            const logElement = document.getElementById('feedback-log');
+
+            const statusClass = type === 'success' ? 'status-success' :
+                               type === 'warning' ? 'status-warning' :
+                               type === 'error' ? 'status-error' : 'status-info';
+
+            logElement.innerHTML += `<div><span class="status-indicator ${statusClass}"></span>${logEntry}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function updateDeviceInfo() {
+            if (typeof deviceAdapter !== 'undefined') {
+                const info = deviceAdapter.getDeviceInfo();
+
+                document.getElementById('device-type').textContent = info.type;
+                document.getElementById('touch-support').textContent = info.touchSupported ? '✅ 支持' : '❌ 不支持';
+                document.getElementById('mouse-support').textContent = info.mouseSupported ? '✅ 支持' : '❌ 不支持';
+                document.getElementById('orientation').textContent = info.orientation;
+                document.getElementById('screen-size').textContent = `${info.windowWidth}×${info.windowHeight}`;
+                document.getElementById('pixel-ratio').textContent = info.pixelRatio;
+
+                log(`设备检测完成: ${info.type}设备，触摸${info.touchSupported ? '支持' : '不支持'}`, 'success');
+            } else {
+                log('设备适配管理器未加载', 'error');
+            }
+        }
+
+        function logInteraction(action) {
+            interactionCount++;
+            const deviceType = deviceAdapter ? deviceAdapter.deviceType : '未知';
+            const method = 'ontouchstart' in window ? '触摸' : '鼠标';
+            log(`${action} (设备: ${deviceType}, 方式: ${method}, 总计: ${interactionCount}次)`, 'info');
+        }
+
+        function testButtonClicks() {
+            log('🧪 开始按钮点击测试...', 'info');
+
+            const buttons = document.querySelectorAll('.interaction-btn');
+            buttons.forEach((btn, index) => {
+                setTimeout(() => {
+                    btn.click();
+                    log(`✅ 按钮${index + 1}点击成功`, 'success');
+                }, (index + 1) * 500);
+            });
+        }
+
+        function testTouchSimulation() {
+            log('👆 开始触摸模拟测试...', 'info');
+
+            if (!('ontouchstart' in window) && deviceAdapter && deviceAdapter.mouseSupported) {
+                log('✅ 检测到桌面浏览器，触摸模拟已启用', 'success');
+
+                // 测试触摸反馈效果
+                const testArea = document.getElementById('interaction-area');
+                testArea.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('interaction-btn')) {
+                        log(`🎯 触摸模拟: ${e.target.textContent} (坐标: ${e.pageX}, ${e.pageY})`, 'info');
+                    }
+                });
+
+                log('📝 请点击上方的按钮测试触摸模拟效果', 'info');
+            } else if ('ontouchstart' in window) {
+                log('✅ 检测到原生触摸支持', 'success');
+                log('📝 请直接触摸按钮测试原生触摸效果', 'info');
+            } else {
+                log('❌ 未检测到触摸或鼠标支持', 'error');
+            }
+        }
+
+        function testHoverEffects() {
+            log('✨ 开始悬停效果测试...', 'info');
+
+            if (deviceAdapter && deviceAdapter.isDesktop()) {
+                log('✅ 桌面设备，悬停效果已启用', 'success');
+
+                const buttons = document.querySelectorAll('.interaction-btn');
+                buttons.forEach(btn => {
+                    btn.addEventListener('mouseenter', () => {
+                        log(`🎯 悬停: ${btn.textContent}`, 'info');
+                    });
+                });
+
+                log('📝 请将鼠标悬停在按钮上测试效果', 'info');
+            } else {
+                log('ℹ️ 移动设备，悬停效果有限制', 'warning');
+                log('💡 移动设备使用触摸反馈代替悬停效果', 'info');
+            }
+        }
+
+        function testResponsiveLayout() {
+            log('📐 开始响应式布局测试...', 'info');
+
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const orientation = width > height ? '横屏' : '竖屏';
+
+            log(`📏 当前屏幕: ${width}×${height} (${orientation})`, 'info');
+
+            // 根据屏幕尺寸给出建议
+            if (width < 480) {
+                log('📱 小屏手机模式 - 布局已优化', 'success');
+            } else if (width < 768) {
+                log('📱 大屏手机模式 - 布局已优化', 'success');
+            } else if (width < 1024) {
+                log('📱 平板模式 - 布局已优化', 'success');
+            } else {
+                log('🖥️ 桌面模式 - 布局已优化', 'success');
+            }
+
+            log('💡 尝试调整浏览器窗口大小或旋转屏幕测试响应式效果', 'info');
+        }
+
+        // 监听屏幕方向变化
+        window.addEventListener('orientationchange', () => {
+            const orientation = window.innerWidth > window.innerHeight ? '横屏' : '竖屏';
+            log(`🔄 屏幕方向变化: ${orientation}`, 'info');
+            updateDeviceInfo();
+        });
+
+        window.addEventListener('resize', () => {
+            log(`📐 窗口大小变化: ${window.innerWidth}×${window.innerHeight}`, 'info');
+            updateDeviceInfo();
+        });
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            log('🎯 设备兼容性测试页面加载完成', 'success');
+
+            setTimeout(() => {
+                updateDeviceInfo();
+                testResponsiveLayout();
+
+                log('🚀 测试准备完成，请选择上方的测试项目', 'info');
+                log('💡 建议按顺序进行: 按钮点击 → 触摸模拟 → 悬停效果 → 响应式布局', 'info');
+            }, 1000);
+        });
+
+        // 等待设备适配器加载
+        setTimeout(() => {
+            if (typeof deviceAdapter === 'undefined') {
+                log('⚠️ 设备适配器未加载，请检查网络连接', 'warning');
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

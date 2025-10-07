@@ -1,0 +1,3148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>反诈先锋 - 桌面版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .desktop-container {
+            width: 1200px;
+            height: 700px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .nav-menu {
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin: 8px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: #3498db;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .user-stats {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        /* 主内容区样式 */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 主菜单样式 */
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .welcome-section h2 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .action-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: #3498db;
+        }
+
+        .action-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .action-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .action-desc {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #27ae60;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* 游戏界面样式 */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .game-info {
+            display: flex;
+            gap: 30px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .scenario-content {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            min-height: 200px;
+        }
+
+        .scenario-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .scenario-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .choices-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .choice-btn {
+            background: white;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .choice-btn:hover {
+            border-color: #3498db;
+            transform: translateX(5px);
+        }
+
+        .choice-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .choice-btn.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .feedback-panel {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        /* 场景库样式 */
+        .scenario-library-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .scenario-library-header h2 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin: 20px 0 10px;
+        }
+
+        .scenario-library-header p {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: #3498db;
+        }
+
+        .category-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .category-card h3 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .category-card p {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-tags {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .difficulty-tag.easy {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .difficulty-tag.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .difficulty-tag.hard {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* 场景列表样式 */
+        .scenario-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .list-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .list-header h3 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .scenario-items {
+            display: grid;
+            gap: 15px;
+        }
+
+        .scenario-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid #3498db;
+        }
+
+        .scenario-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .scenario-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .scenario-item-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .scenario-item-difficulty {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .scenario-item-text {
+            font-size: 14px;
+            color: #7f8c8d;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .scenario-item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #95a5a6;
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #1976d2;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        /* 加载动画 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 游戏完成界面样式 */
+        .game-complete-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .game-complete-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 640px;
+            width: 85%;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .game-complete-title {
+            font-size: 24px;
+            color: #27ae60;
+            margin-bottom: 15px;
+            font-weight: bold;
+            line-height: 1.3;
+        }
+
+        .game-complete-stats {
+            margin-bottom: 20px;
+        }
+
+        .game-complete-stat {
+            font-size: 14px;
+            margin: 8px 0;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+
+        .game-complete-stat strong {
+            color: #3498db;
+        }
+
+        .game-complete-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        /* 教程模块样式 */
+        .tutorial-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tutorial-title {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .tutorial-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tutorial-nav-btn {
+            padding: 12px 24px;
+            border: 2px solid #3498db;
+            background: white;
+            color: #3498db;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tutorial-nav-btn:hover,
+        .tutorial-nav-btn.active {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .tutorial-content {
+            min-height: 500px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .tutorial-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tutorial-section.active {
+            display: block;
+        }
+
+        .tutorial-section h3 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 25px;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .tutorial-section h4 {
+            color: #34495e;
+            font-size: 22px;
+            margin: 20px 0 15px;
+        }
+
+        .tutorial-section h5 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin: 15px 0 10px;
+        }
+
+        /* 受害者案例样式 */
+        .victim-cases {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .case-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #e74c3c;
+            transition: transform 0.3s ease;
+        }
+
+        .case-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .case-card h4 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .case-card p {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+
+        /* 特征网格样式 */
+        .characteristics-grid {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            margin-bottom: 30px;
+        }
+
+        .characteristic-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #3498db;
+        }
+
+        .characteristic-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .characteristic-card ul {
+            padding-left: 20px;
+        }
+
+        .characteristic-card li {
+            margin: 8px 0;
+            line-height: 1.4;
+            color: #555;
+        }
+
+        /* 场景类型样式 */
+        .scenario-types {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .scenario-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .scenario-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #9b59b6;
+        }
+
+        .scenario-icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        /* 防范方法样式 */
+        .prevention-methods {
+            display: grid;
+            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+
+        .method-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .method-card h4 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .method-content p {
+            margin: 8px 0;
+            line-height: 1.4;
+            color: #555;
+        }
+
+        /* 口诀样式 */
+        .mnemonic-container {
+            display: grid;
+            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            margin-bottom: 30px;
+        }
+
+        .mnemonic-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #27ae60;
+        }
+
+        .mnemonic-card h4 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .mnemonic-content p {
+            margin: 10px 0;
+            line-height: 1.5;
+            color: #2c3e50;
+        }
+
+        /* 紧急联系方式样式 */
+        .emergency-contacts {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .contact-list {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            color: #856404;
+        }
+
+        .contact-icon {
+            font-size: 24px;
+        }
+
+        /* 教程控制按钮 */
+        .tutorial-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .tutorial-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tutorial-nav-btn {
+                width: 200px;
+            }
+            
+            .victim-cases,
+            .characteristics-grid,
+            .prevention-methods,
+            .mnemonic-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-list {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+        }
+
+        /* 挑战总结样式 */
+        .challenge-summary {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .challenge-summary h3 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-stat {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            font-size: 20px;
+        }
+
+        .stat-label {
+            font-weight: bold;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        /* 加油样式 */
+        .encouragement-message {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 10px;
+            border-left: 4px solid #1976d2;
+        }
+
+        .encouragement-message h3 {
+            margin: 0 0 10px 0;
+            color: #1565c0;
+            font-size: 18px;
+        }
+
+        .encouragement-text {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #2c3e50;
+            font-style: italic;
+        }
+
+        /* 关闭按钮样式 */
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 2em;
+            color: #999;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #666;
+            transform: scale(1.1);
+        }
+        
+        /* 倒计时提示样式 */
+        .countdown-tip {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        #countdown-text {
+            font-size: 0.9em;
+            color: #666;
+            font-weight: bold;
+        }
+
+        /* 我的成就页面样式 */
+        .achievements-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .achievements-container h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+        
+        .session-stats {
+            margin-bottom: 30px;
+        }
+        
+        .session-stats h3 {
+            color: #3498db;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-color: #3498db;
+        }
+        
+        .stat-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .encouragement-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 12px;
+            border-left: 4px solid #1976d2;
+        }
+        
+        .encouragement-section h3 {
+            color: #1565c0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .encouragement-content {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+        
+        .achievement-badges {
+            margin-bottom: 30px;
+        }
+        
+        .achievement-badges h3 {
+            color: #f39c12;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+        
+        .badge-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #f1f3f4;
+            transition: all 0.3s ease;
+        }
+        
+        .badge-item.unlocked {
+            border-color: #f39c12;
+            background: linear-gradient(135deg, #fff9e6 0%, #ffe8b3 100%);
+        }
+        
+        .badge-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .badge-icon {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+        
+        .badge-name {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .badge-description {
+            color: #7f8c8d;
+            font-size: 0.8em;
+            line-height: 1.3;
+        }
+        
+        .no-badges {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .achievements-footer {
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+            padding-top: 20px;
+        }
+        
+        .session-note {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        /* 场景库样式 */
+        .scenario-library-header {
+            margin-bottom: 30px;
+        }
+
+        .scenario-library-header h2 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .scenario-library-header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: #3498db;
+        }
+
+        .category-card.active {
+            border-color: #3498db;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #3498db;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .category-card.active::before {
+            opacity: 1;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .category-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .category-count {
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .category-description {
+            color: #7f8c8d;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .difficulty-tag.easy {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .difficulty-tag.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .difficulty-tag.hard {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .scenario-list {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .scenario-list-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 20px;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .scenario-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 20px;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f3f4;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .scenario-item:hover {
+            background: #f8f9fa;
+        }
+
+        .scenario-item:last-child {
+            border-bottom: none;
+        }
+
+        .scenario-title {
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .scenario-difficulty {
+            display: flex;
+            justify-content: center;
+        }
+
+        .scenario-points {
+            text-align: center;
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .start-scenario-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            justify-self: center;
+        }
+
+        .start-scenario-btn:hover {
+            background: #229954;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+        }
+
+        .start-scenario-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="desktop-container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>反诈先锋</h1>
+                <p>桌面版 v2.0</p>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-item active" onclick="switchScreen('main-menu')">
+                    <span class="nav-icon">🏠</span>
+                    主菜单
+                </div>
+                <div class="nav-item" onclick="startGame()">
+                    <span class="nav-icon">🎮</span>
+                    开始挑战
+                </div>
+                <div class="nav-item" onclick="switchScreen('scenario-library')">
+                    <span class="nav-icon">📚</span>
+                    场景库
+                </div>
+                <div class="nav-item" onclick="switchScreen('tutorial')">
+                    <span class="nav-icon">📖</span>
+                    防诈骗教程
+                </div>
+                <div class="nav-item" onclick="showAchievements()">
+                    <span class="nav-icon">🏆</span>
+                    我的成就
+                </div>
+                <div class="nav-item" onclick="switchScreen('stats')">
+                    <span class="nav-icon">📊</span>
+                    学习统计
+                </div>
+            </div>
+
+            <div class="user-stats">
+                <div class="stat-item">
+                    <span>当前连击:</span>
+                    <span id="sidebar-streak">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>最佳连击:</span>
+                    <span id="sidebar-best-streak">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>总积分:</span>
+                    <span id="sidebar-total-score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>完成场景:</span>
+                    <span id="sidebar-completed">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 主菜单界面 -->
+            <div id="main-menu" class="screen active">
+                <div class="welcome-section">
+                    <h2>欢迎来到反诈先锋</h2>
+                    <p>通过真实案例学习识别各种诈骗手段，保护您的财产安全</p>
+                </div>
+
+                <div class="quick-actions">
+                    <div class="action-card" onclick="startGame()">
+                        <div class="action-icon">🎮</div>
+                        <div class="action-title">开始挑战</div>
+                        <div class="action-desc">测试您的反诈知识，提升识别能力</div>
+                    </div>
+                    <div class="action-card" onclick="switchScreen('scenario-library')">
+                        <div class="action-icon">📚</div>
+                        <div class="action-title">场景库</div>
+                        <div class="action-desc">浏览所有诈骗场景，系统学习</div>
+                    </div>
+                    <div class="action-card" onclick="switchScreen('tutorial')">
+                        <div class="action-icon">📖</div>
+                        <div class="action-title">防诈骗教程</div>
+                        <div class="action-desc">学习各类诈骗的识别技巧</div>
+                    </div>
+                    <div class="action-card" onclick="showAchievements()">
+                        <div class="action-icon">🏆</div>
+                        <div class="action-title">我的成就</div>
+                        <div class="action-desc">查看您的学习成果和成就</div>
+                    </div>
+                </div>
+
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <div class="stat-number" id="main-streak">0</div>
+                        <div class="stat-label">当前连击</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="main-best-streak">0</div>
+                        <div class="stat-label">最佳连击</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="main-total-score">0</div>
+                        <div class="stat-label">总积分</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="main-completed">0</div>
+                        <div class="stat-label">完成场景</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 游戏界面 -->
+            <div id="game-screen" class="screen">
+                <div class="game-header">
+                    <button class="btn btn-secondary" onclick="backToMenu()">返回主菜单</button>
+                    <div class="game-info">
+                        <div class="info-item">
+                            <div class="info-label">得分</div>
+                            <div class="info-value" id="game-score">0</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">关卡</div>
+                            <div class="info-value" id="game-level">1</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">连击</div>
+                            <div class="info-value" id="game-streak">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scenario-content">
+                    <div class="scenario-title" id="scenario-title">加载中...</div>
+                    <div class="scenario-text" id="scenario-text"></div>
+                </div>
+
+                <div class="choices-grid" id="choices-container">
+                    <!-- 选项将动态加载 -->
+                </div>
+
+                <div class="feedback-panel hidden" id="feedback-panel">
+                    <div class="feedback-title">解析</div>
+                    <div id="feedback-text"></div>
+                    <button class="btn btn-success" onclick="nextScenario()" style="margin-top: 15px;">下一题</button>
+                </div>
+            </div>
+
+            <!-- 场景库界面 -->
+            <div id="scenario-library" class="screen">
+                <div class="scenario-library-header">
+                    <button class="btn btn-secondary" onclick="backToMenu()">返回主菜单</button>
+                    <h2>诈骗场景库</h2>
+                    <p>选择特定类型的诈骗场景进行专项学习</p>
+                </div>
+                
+                <!-- 分类选择 -->
+                <div class="category-grid">
+                    <div class="category-card" data-category="电话诈骗" onclick="selectCategory('电话诈骗')">
+                        <div class="category-header">
+                            <div class="category-title">电话诈骗</div>
+                            <div class="category-count">6个案例</div>
+                        </div>
+                        <div class="category-description">冒充公检法、客服、亲友等身份进行电话诈骗</div>
+                        <div class="difficulty-tags">
+                            <span class="difficulty-tag easy">简单</span>
+                            <span class="difficulty-tag medium">中等</span>
+                            <span class="difficulty-tag hard">困难</span>
+                        </div>
+                    </div>
+                    
+                    <div class="category-card" data-category="短信诈骗" onclick="selectCategory('短信诈骗')">
+                        <div class="category-header">
+                            <div class="category-title">短信诈骗</div>
+                            <div class="category-count">6个案例</div>
+                        </div>
+                        <div class="category-description">通过短信发送虚假中奖、链接、验证码等信息</div>
+                        <div class="difficulty-tags">
+                            <span class="difficulty-tag easy">简单</span>
+                            <span class="difficulty-tag medium">中等</span>
+                        </div>
+                    </div>
+                    
+                    <div class="category-card" data-category="网络诈骗" onclick="selectCategory('网络诈骗')">
+                        <div class="category-header">
+                            <div class="category-title">网络诈骗</div>
+                            <div class="category-count">7个案例</div>
+                        </div>
+                        <div class="category-description">网络购物、投资、兼职等各类网络诈骗</div>
+                        <div class="difficulty-tags">
+                            <span class="difficulty-tag easy">简单</span>
+                            <span class="difficulty-tag medium">中等</span>
+                            <span class="difficulty-tag hard">困难</span>
+                        </div>
+                    </div>
+                    
+                    <div class="category-card" data-category="社交诈骗" onclick="selectCategory('社交诈骗')">
+                        <div class="category-header">
+                            <div class="category-title">社交诈骗</div>
+                            <div class="category-count">6个案例</div>
+                        </div>
+                        <div class="category-description">社交平台上的冒充熟人、情感诈骗等</div>
+                        <div class="difficulty-tags">
+                            <span class="difficulty-tag medium">中等</span>
+                            <span class="difficulty-tag hard">困难</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 场景列表 -->
+                <div id="scenario-list" class="scenario-list">
+                    <!-- 场景列表将通过JavaScript动态生成 -->
+                </div>
+            </div>
+
+            <div id="tutorial" class="screen">
+                <div class="tutorial-container">
+                    <h2 class="tutorial-title">防诈骗知识教程</h2>
+                    
+                    <!-- 教程导航 -->
+                    <div class="tutorial-nav">
+                        <button class="tutorial-nav-btn active" data-section="victims">受害者案例</button>
+                        <button class="tutorial-nav-btn" data-section="characteristics">易受骗特征</button>
+                        <button class="tutorial-nav-btn" data-section="prevention">识破与解脱</button>
+                        <button class="tutorial-nav-btn" data-section="mnemonic">防范口诀</button>
+                    </div>
+                    
+                    <!-- 教程内容区域 -->
+                    <div class="tutorial-content">
+                        
+                        <!-- 第一部分：受害者案例 -->
+                        <div class="tutorial-section active" id="section-victims">
+                            <h3>电信诈骗受害者惨痛遭遇案例</h3>
+                            <div class="victim-cases">
+                                <div class="case-card">
+                                    <h4>案例一：退休老人被骗养老钱</h4>
+                                    <p><strong>受害者：</strong>张大爷，68岁，退休教师</p>
+                                    <p><strong>诈骗手法：</strong>冒充公检法，声称涉嫌洗钱</p>
+                                    <p><strong>损失金额：</strong>85万元（毕生积蓄）</p>
+                                    <p><strong>惨痛后果：</strong>老人精神崩溃，家庭关系破裂</p>
+                                </div>
+                                
+                                <div class="case-card">
+                                    <h4>案例二：大学生网贷陷阱</h4>
+                                    <p><strong>受害者：</strong>小李，21岁，在校大学生</p>
+                                    <p><strong>诈骗手法：</strong>虚假贷款平台，高额手续费</p>
+                                    <p><strong>损失金额：</strong>3万元（学费和生活费）</p>
+                                    <p><strong>惨痛后果：</strong>学业中断，背负沉重债务</p>
+                                </div>
+                                
+                                <div class="case-card">
+                                    <h4>案例三：企业财务被骗巨款</h4>
+                                    <p><strong>受害者：</strong>王女士，35岁，公司财务主管</p>
+                                    <p><strong>诈骗手法：</strong>冒充领导，紧急项目转账</p>
+                                    <p><strong>损失金额：</strong>200万元（公司资金）</p>
+                                    <p><strong>惨痛后果：</strong>被公司开除，面临法律追责</p>
+                                </div>
+                                
+                                <div class="case-card">
+                                    <h4>案例四：宝妈刷单被骗</h4>
+                                    <p><strong>受害者：</strong>刘女士，28岁，全职妈妈</p>
+                                    <p><strong>诈骗手法：</strong>兼职刷单，先小利后大额</p>
+                                    <p><strong>损失金额：</strong>15万元（家庭备用金）</p>
+                                    <p><strong>惨痛后果：</strong>夫妻矛盾激化，家庭经济危机</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 第二部分：易受骗特征 -->
+                        <div class="tutorial-section" id="section-characteristics">
+                            <h3>易受骗人群及场景特征</h3>
+                            
+                            <div class="characteristics-grid">
+                                <div class="characteristic-card">
+                                    <h4>👵 老年人群体</h4>
+                                    <ul>
+                                        <li>信息获取渠道有限，防范意识薄弱</li>
+                                        <li>对新技术不熟悉，容易轻信"官方"来电</li>
+                                        <li>关心健康、养老等话题，易被相关诈骗吸引</li>
+                                        <li>积蓄较多，成为诈骗分子的主要目标</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="characteristic-card">
+                                    <h4>🎓 学生群体</h4>
+                                    <ul>
+                                        <li>社会经验不足，容易轻信他人</li>
+                                        <li>经济压力大，易被兼职、贷款等诱惑</li>
+                                        <li>网络使用频繁，接触诈骗信息机会多</li>
+                                        <li>追求时尚消费，易陷入购物诈骗</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="characteristic-card">
+                                    <h4>💼 职场人士</h4>
+                                    <ul>
+                                        <li>工作压力大，容易在疲惫时判断失误</li>
+                                        <li>涉及资金往来，易被冒充领导诈骗</li>
+                                        <li>追求职业发展，易被培训、投资诈骗</li>
+                                        <li>社交圈子广，个人信息泄露风险高</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="characteristic-card">
+                                    <h4>🏠 家庭主妇</h4>
+                                    <ul>
+                                        <li>时间相对充裕，易参与网络兼职</li>
+                                        <li>关注家庭理财，易被投资诈骗吸引</li>
+                                        <li>购物需求大，易陷入虚假购物诈骗</li>
+                                        <li>关心家人健康，易被保健品诈骗</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="scenario-types">
+                                <h4>常见诈骗场景特征</h4>
+                                <div class="scenario-list">
+                                    <div class="scenario-item">
+                                        <span class="scenario-icon">📞</span>
+                                        <strong>电话诈骗：</strong>冒充公检法、客服、领导等身份
+                                    </div>
+                                    <div class="scenario-item">
+                                        <span class="scenario-icon">💬</span>
+                                        <strong>短信诈骗：</strong>中奖通知、银行升级、ETC认证等
+                                    </div>
+                                    <div class="scenario-item">
+                                        <span class="scenario-icon">🌐</span>
+                                        <strong>网络诈骗：</strong>虚假购物、投资理财、兼职刷单等
+                                    </div>
+                                    <div class="scenario-item">
+                                        <span class="scenario-icon">👥</span>
+                                        <strong>社交诈骗：</strong>冒充亲友、网络交友、情感诈骗等
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 第三部分：识破与解脱方法 -->
+                        <div class="tutorial-section" id="section-prevention">
+                            <h3>识破与解脱电信诈骗方法</h3>
+                            
+                            <div class="prevention-methods">
+                                <div class="method-card">
+                                    <h4>🔍 识破技巧</h4>
+                                    <div class="method-content">
+                                        <h5>1. 核实身份信息</h5>
+                                        <p>• 公检法不会电话办案要求转账</p>
+                                        <p>• 银行客服有专用号码，可回拨核实</p>
+                                        <p>• 领导要求转账必须当面或电话确认</p>
+                                        
+                                        <h5>2. 识别诈骗话术</h5>
+                                        <p>• "安全账户"、"保密协议"都是骗局</p>
+                                        <p>• "限时优惠"、"最后机会"多为诱饵</p>
+                                        <p>• "系统升级"、"账户异常"需要官方核实</p>
+                                        
+                                        <h5>3. 警惕异常要求</h5>
+                                        <p>• 要求提供验证码、密码等敏感信息</p>
+                                        <p>• 要求下载不明APP或点击陌生链接</p>
+                                        <p>• 要求避开家人朋友单独操作</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="method-card">
+                                    <h4>🆘 解脱方法</h4>
+                                    <div class="method-content">
+                                        <h5>1. 保持冷静理智</h5>
+                                        <p>• 深呼吸，不要被对方情绪操控</p>
+                                        <p>• 给自己思考时间，不要急于操作</p>
+                                        <p>• 记住：真正的紧急情况不会只靠电话解决</p>
+                                        
+                                        <h5>2. 寻求帮助核实</h5>
+                                        <p>• 立即挂断电话，拨打110或反诈专线96110</p>
+                                        <p>• 联系家人、朋友或同事帮忙判断</p>
+                                        <p>• 通过官方渠道核实对方身份和信息</p>
+                                        
+                                        <h5>3. 采取保护措施</h5>
+                                        <p>• 立即修改可能泄露的密码</p>
+                                        <p>• 联系银行冻结可疑账户</p>
+                                        <p>• 保存证据，及时报警</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 第四部分：防范口诀 -->
+                        <div class="tutorial-section" id="section-mnemonic">
+                            <h3>防范电信诈骗口诀</h3>
+                            
+                            <div class="mnemonic-container">
+                                <div class="mnemonic-card">
+                                    <h4>📋 防骗七字诀</h4>
+                                    <div class="mnemonic-content">
+                                        <p><strong>一核实：</strong>身份信息要核实，官方渠道最可靠</p>
+                                        <p><strong>二不贪：</strong>不贪小利不图便，天上不会掉馅饼</p>
+                                        <p><strong>三警惕：</strong>警惕陌生来电信，链接APP勿轻点</p>
+                                        <p><strong>四保密：</strong>密码验证要保密，绝不透露给他人</p>
+                                        <p><strong>五冷静：</strong>遇到急事要冷静，多方求证再决定</p>
+                                        <p><strong>六求助：</strong>疑惑之时求帮助，家人警察最可靠</p>
+                                        <p><strong>七报警：</strong>发现被骗速报警，及时止损减损失</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mnemonic-card">
+                                    <h4>🎯 情景应对口诀</h4>
+                                    <div class="mnemonic-content">
+                                        <p><strong>电话诈骗：</strong>公检法不电话办案，安全账户是骗局</p>
+                                        <p><strong>短信诈骗：</strong>中奖链接不要点，银行升级要核实</p>
+                                        <p><strong>网络诈骗：</strong>先交费用是陷阱，高额回报要警惕</p>
+                                        <p><strong>社交诈骗：</strong>网友借钱要谨慎，视频确认最保险</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mnemonic-card">
+                                    <h4>🛡️ 日常防范口诀</h4>
+                                    <div class="mnemonic-content">
+                                        <p><strong>个人信息：</strong>身份证号不乱填，银行卡号要保密</p>
+                                        <p><strong>密码安全：</strong>不同账户不同密，定期更换更安全</p>
+                                        <p><strong>支付习惯：</strong>小额支付先确认，大额转账多核实</p>
+                                        <p><strong>软件使用：</strong>官方应用商店下，权限设置要合理</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="emergency-contacts">
+                                <h4>紧急联系方式</h4>
+                                <div class="contact-list">
+                                    <div class="contact-item">
+                                        <span class="contact-icon">🚨</span>
+                                        <strong>报警电话：</strong>110
+                                    </div>
+                                    <div class="contact-item">
+                                        <span class="contact-icon">📞</span>
+                                        <strong>反诈专线：</strong>96110
+                                    </div>
+                                    <div class="contact-item">
+                                        <span class="contact-icon">🏦</span>
+                                        <strong>银行客服：</strong>各银行官方客服电话
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 导航按钮 -->
+                    <div class="tutorial-controls">
+                        <button class="btn btn-secondary" onclick="backToMenu()">返回主菜单</button>
+                        <button class="btn btn-primary" onclick="startPractice()">开始练习</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="achievements" class="screen">
+                <div class="achievements-container">
+                    <h2>🏆 我的成就</h2>
+                    
+                    <!-- 会话统计 -->
+                    <div class="session-stats">
+                        <h3>📊 本次游戏统计</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">🎯</div>
+                                <div class="stat-value" id="session-accuracy">0%</div>
+                                <div class="stat-label">答题准确率</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">⭐</div>
+                                <div class="stat-value" id="session-score">0</div>
+                                <div class="stat-label">获得分数</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">🔥</div>
+                                <div class="stat-value" id="session-streak">0</div>
+                                <div class="stat-label">最佳连击</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📚</div>
+                                <div class="stat-value" id="session-completed">0</div>
+                                <div class="stat-label">完成场景</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 鼓励评价 -->
+                    <div class="encouragement-section">
+                        <h3>💪 本次表现评价</h3>
+                        <div class="encouragement-content" id="session-encouragement">
+                            <p>开始你的防诈骗学习之旅吧！</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 成就徽章 -->
+                    <div class="achievement-badges">
+                        <h3>🏅 本次成就徽章</h3>
+                        <div class="badges-grid" id="session-badges">
+                            <div class="no-badges">
+                                <p>继续努力，解锁更多成就徽章！</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="achievements-footer">
+                        <p class="session-note">💡 提示：本次游戏数据仅在当前会话中保存，关闭游戏后将会清零</p>
+                        <button class="btn btn-primary" onclick="backToMenu()">返回主菜单</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="stats" class="screen">
+                <h2>学习统计</h2>
+                <p>功能开发中...</p>
+                <button class="btn btn-secondary" onclick="backToMenu()">返回</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载动画 -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>正在加载游戏场景...</p>
+        </div>
+    </div>
+
+    <script>
+        // 游戏数据
+        const gameData = {
+            currentScore: 0,
+            currentLevel: 1,
+            streak: 0,
+            bestStreak: 0,
+            totalScore: 0,
+            completedScenarios: 0,
+            // 新增：用于跟踪已答题目和游戏模式
+            answeredScenarios: [], // 已答题目ID列表
+            currentMode: 'random', // 游戏模式：random(随机挑战) 或 category(场景库)
+            currentCategory: '', // 当前选择的分类（场景库模式使用）
+            remainingScenarios: [], // 剩余未答题目列表
+            // 新增：会话统计（单次游戏数据）
+            sessionStats: {
+                startTime: null,
+                correctAnswers: 0,
+                totalAnswers: 0,
+                sessionScore: 0,
+                sessionBestStreak: 0,
+                completedScenarios: 0,
+                unlockedBadges: []
+            }
+        };
+
+        // 完整的25个诈骗场景数据（基于游戏场景.md）
+        const scenarios = [
+            // 电话诈骗场景 (6个)
+            {
+                id: "phone_001",
+                type: "电话诈骗",
+                title: "冒充公检法诈骗",
+                text: "您接到一个自称是公安机关的电话，说您的账户涉嫌洗钱犯罪，要求您立即将资金转移到指定的'安全账户'进行审查。对方语气严厉，声称如果不配合将面临法律后果。",
+                choices: [
+                    { text: "立即转账到安全账户", correct: false },
+                    { text: "要求对方出示证件并拨打110核实", correct: true },
+                    { text: "询问更多案件细节", correct: false },
+                    { text: "挂断电话不予理会", correct: false }
+                ],
+                feedback: "正确做法：公检法机关绝不会通过电话要求转账。遇到此类情况应保持冷静，通过官方渠道核实。",
+                difficulty: "中等",
+                points: 100
+            },
+            {
+                id: "phone_002",
+                type: "电话诈骗",
+                title: "冒充客服退款诈骗",
+                text: "您接到自称是电商平台客服的电话，说您购买的商品存在质量问题，需要为您办理退款。对方准确说出了您的订单信息，要求您提供银行卡验证码完成退款流程。",
+                choices: [
+                    { text: "立即提供银行卡验证码", correct: false },
+                    { text: "通过官方APP或网站联系客服核实", correct: true },
+                    { text: "按照对方指示操作退款", correct: false },
+                    { text: "要求对方发送退款链接", correct: false }
+                ],
+                feedback: "正确做法：银行卡验证码绝不能告诉任何人。电商退款应通过官方渠道处理。",
+                difficulty: "简单",
+                points: 80
+            },
+            {
+                id: "phone_003",
+                type: "电话诈骗",
+                title: "冒充领导诈骗",
+                text: "您接到一个自称是公司领导的电话，说有紧急项目需要立即支付一笔款项，要求您马上转账到指定账户。对方语气急切，声称情况紧急不能耽误。",
+                choices: [
+                    { text: "立即转账到指定账户", correct: false },
+                    { text: "通过其他方式核实领导身份", correct: true },
+                    { text: "询问项目具体细节", correct: false },
+                    { text: "表示需要请示上级", correct: false }
+                ],
+                feedback: "正确做法：转账前务必通过多种渠道确认对方身份，避免冒充领导诈骗。",
+                difficulty: "中等",
+                points: 120
+            },
+            {
+                id: "phone_004",
+                type: "电话诈骗",
+                title: "医保卡异常诈骗",
+                text: "您接到自称是医保局工作人员的电话，说您的医保卡在异地有异常消费记录，涉嫌违规使用。要求您提供个人信息进行核实，否则将冻结医保账户。",
+                choices: [
+                    { text: "立即提供个人信息", correct: false },
+                    { text: "挂断电话并拨打官方热线核实", correct: true },
+                    { text: "询问具体消费记录", correct: false },
+                    { text: "要求对方发送证明文件", correct: false }
+                ],
+                feedback: "正确做法：医保局不会通过电话要求提供密码等敏感信息。应通过官方渠道核实。",
+                difficulty: "简单",
+                points: 80
+            },
+            {
+                id: "phone_005",
+                type: "电话诈骗",
+                title: "ETC认证诈骗",
+                text: "您接到自称是高速ETC客服的电话，说您的ETC账户即将失效，需要立即点击链接完成认证。对方提供了您的车牌信息，要求您尽快操作避免影响使用。",
+                choices: [
+                    { text: "点击链接完成认证", correct: false },
+                    { text: "通过官方ETCAPP核实账户状态", correct: true },
+                    { text: "提供更多个人信息", correct: false },
+                    { text: "挂断电话不予理会", correct: false }
+                ],
+                feedback: "正确做法：ETC认证请通过官方APP或官网办理，不要点击陌生链接。",
+                difficulty: "中等",
+                points: 90
+            },
+            {
+                id: "phone_006",
+                type: "电话诈骗",
+                title: "贷款诈骗",
+                text: "您接到贷款推销电话，对方声称可以提供无抵押低息贷款，手续简单审批快。要求您提供身份证和银行卡照片，并支付少量手续费。",
+                choices: [
+                    { text: "立即提供证件照片", correct: false },
+                    { text: "核实该公司资质后再考虑", correct: true },
+                    { text: "支付手续费尝试申请", correct: false },
+                    { text: "推荐给有需要的朋友", correct: false }
+                ],
+                feedback: "正确做法：任何要求先收费的贷款都是诈骗。正规贷款机构不会提前收费。",
+                difficulty: "困难",
+                points: 120
+            },
+            
+            // 短信诈骗场景 (6个)
+            {
+                id: "sms_001",
+                type: "短信诈骗",
+                title: "中奖诈骗短信",
+                text: "您收到一条中奖短信，声称您中了某知名品牌的大奖，奖品价值数万元。短信中包含一个链接，要求您点击链接填写个人信息领取奖品。",
+                choices: [
+                    { text: "立即点击链接领取奖品", correct: false },
+                    { text: "删除短信，不要点击任何链接", correct: true },
+                    { text: "转发给朋友一起参与", correct: false },
+                    { text: "拨打短信中的联系电话", correct: false }
+                ],
+                feedback: "正确做法：天上不会掉馅饼，中奖信息基本是诈骗。不要点击任何陌生链接。",
+                difficulty: "简单",
+                points: 60
+            },
+            {
+                id: "sms_002",
+                type: "短信诈骗",
+                title: "银行升级提醒",
+                text: "您收到一条银行升级提醒短信，声称银行系统正在升级，需要您点击链接更新个人信息。短信看起来像是银行官方发送的。",
+                choices: [
+                    { text: "点击链接更新信息", correct: false },
+                    { text: "通过官方银行APP或客服核实", correct: true },
+                    { text: "忽略短信不予理会", correct: false },
+                    { text: "回复短信确认信息", correct: false }
+                ],
+                feedback: "正确做法：银行升级会通过官方渠道通知，不要点击短信中的链接。",
+                difficulty: "中等",
+                points: 90
+            },
+            {
+                id: "sms_003",
+                type: "短信诈骗",
+                title: "ETC认证短信",
+                text: "您收到一条ETC认证短信，声称您的ETC设备需要重新认证，否则将影响正常使用。短信中包含一个认证链接。",
+                choices: [
+                    { text: "点击链接完成认证", correct: false },
+                    { text: "通过官方ETC渠道处理", correct: true },
+                    { text: "拨打短信中的客服电话", correct: false },
+                    { text: "删除短信不予理会", correct: false }
+                ],
+                feedback: "正确做法：官方机构不会通过短信链接要求认证，应通过正规渠道办理。",
+                difficulty: "中等",
+                points: 100
+            },
+            {
+                id: "sms_004",
+                type: "短信诈骗",
+                title: "冒充学校收费诈骗",
+                text: "您收到一条学校通知短信，声称需要在线缴纳学费，短信中包含缴费链接和详细的缴费说明。",
+                choices: [
+                    { text: "点击链接立即缴费", correct: false },
+                    { text: "联系学校老师或班主任核实", correct: true },
+                    { text: "转发给其他家长确认", correct: false },
+                    { text: "拨打短信中的联系电话", correct: false }
+                ],
+                feedback: "正确做法：学校缴费应该通过官方渠道或学校通知，不要点击陌生链接缴费。",
+                difficulty: "中等",
+                points: 100
+            },
+            {
+                id: "sms_005",
+                type: "短信诈骗",
+                title: "积分兑换诈骗",
+                text: "您收到一条运营商积分兑换短信，声称您的积分即将过期，可以兑换高价值礼品。短信中包含兑换链接。",
+                choices: [
+                    { text: "点击链接兑换礼品", correct: false },
+                    { text: "登录官方运营商APP核实积分", correct: true },
+                    { text: "转发给家人一起兑换", correct: false },
+                    { text: "拨打客服电话确认", correct: false }
+                ],
+                feedback: "正确做法：运营商积分兑换通过官方APP或营业厅办理，不要点击短信链接。",
+                difficulty: "简单",
+                points: 70
+            },
+            {
+                id: "sms_006",
+                type: "短信诈骗",
+                title: "快递签收诈骗",
+                text: "您收到一条快递签收短信，声称有包裹需要签收，但地址信息不完整。短信中包含更新地址的链接。",
+                choices: [
+                    { text: "点击链接更新地址", correct: false },
+                    { text: "通过官方快递APP查询物流信息", correct: true },
+                    { text: "拨打短信中的客服电话", correct: false },
+                    { text: "忽略短信等待快递", correct: false }
+                ],
+                feedback: "正确做法：快递信息更新应该通过官方快递渠道，不要点击陌生链接。",
+                difficulty: "中等",
+                points: 90
+            },
+            
+            // 网络诈骗场景 (7个)
+            {
+                id: "net_001",
+                type: "网络诈骗",
+                title: "钓鱼网站诈骗",
+                text: "您收到一封邮件，声称您的银行账户存在风险，需要立即登录验证。邮件中包含一个银行网站链接，但网址看起来有些奇怪。",
+                choices: [
+                    { text: "点击链接登录验证", correct: false },
+                    { text: "通过官方APP或网站登录检查", correct: true },
+                    { text: "回复邮件确认信息", correct: false },
+                    { text: "转发给朋友帮忙判断", correct: false }
+                ],
+                feedback: "正确做法：仔细检查网站域名，不轻信陌生链接。银行账户问题应通过官方渠道处理。",
+                difficulty: "困难",
+                points: 150
+            },
+            {
+                id: "net_002",
+                type: "网络诈骗",
+                title: "虚假投资诈骗",
+                text: "您在社交媒体上看到一个投资广告，承诺月收益20%，无风险高回报。对方提供了很多成功案例，要求您下载特定APP进行投资。",
+                choices: [
+                    { text: "立即下载APP投资", correct: false },
+                    { text: "查询该投资平台资质和口碑", correct: true },
+                    { text: "先投少量资金试试", correct: false },
+                    { text: "推荐给朋友一起投资", correct: false }
+                ],
+                feedback: "正确做法：高收益必然伴随高风险，天下没有免费午餐。投资前务必核实平台资质。",
+                difficulty: "中等",
+                points: 120
+            },
+            {
+                id: "net_003",
+                type: "网络诈骗",
+                title: "兼职刷单诈骗",
+                text: "您在兼职群看到一条招聘信息，声称可以居家办公，日薪300-500元，工作内容是给电商平台刷单提升销量。",
+                choices: [
+                    { text: "立即报名参与", correct: false },
+                    { text: "拒绝参与并举报诈骗信息", correct: true },
+                    { text: "先尝试小额刷单", correct: false },
+                    { text: "推荐给需要兼职的朋友", correct: false }
+                ],
+                feedback: "正确做法：刷单是违法行为，任何要求垫付资金的兼职都是诈骗。",
+                difficulty: "简单",
+                points: 80
+            },
+            {
+                id: "net_004",
+                type: "网络诈骗",
+                title: "游戏账号交易诈骗",
+                text: "您在游戏交易平台看到有人高价收购游戏账号，对方承诺立即付款，但要求您先提供账号密码进行验证。",
+                choices: [
+                    { text: "立即提供账号密码", correct: false },
+                    { text: "通过游戏官方渠道核实交易信息", correct: true },
+                    { text: "要求对方先付定金", correct: false },
+                    { text: "推荐给其他游戏玩家", correct: false }
+                ],
+                feedback: "正确做法：游戏账号交易应该通过官方认证平台，不要轻易提供账号密码。",
+                difficulty: "中等",
+                points: 100
+            },
+            {
+                id: "net_005",
+                type: "网络诈骗",
+                title: "虚假客服诈骗",
+                text: "您在购物时遇到问题，在网上搜索客服电话。拨通后对方自称是平台客服，以账户异常为由要求您进行身份验证。",
+                choices: [
+                    { text: "立即提供身份信息", correct: false },
+                    { text: "通过官方APP联系客服核实情况", correct: true },
+                    { text: "按照对方指示操作", correct: false },
+                    { text: "挂断电话重新搜索", correct: false }
+                ],
+                feedback: "正确做法：客服问题应该通过官方渠道处理，不要相信网上搜索的非官方电话。",
+                difficulty: "困难",
+                points: 130
+            },
+            {
+                id: "net_006",
+                type: "网络诈骗",
+                title: "虚假慈善捐款诈骗",
+                text: "您在社交媒体上看到一个慈善捐款项目，声称帮助贫困儿童，提供了很多感人照片和故事。捐款链接指向一个个人账户。",
+                choices: [
+                    { text: "立即捐款献爱心", correct: false },
+                    { text: "通过正规公益机构查询并捐款", correct: true },
+                    { text: "转发给朋友一起捐款", correct: false },
+                    { text: "少量捐款尝试", correct: false }
+                ],
+                feedback: "正确做法：慈善捐款应该通过正规公益机构进行，避免个人账户收款。",
+                difficulty: "中等",
+                points: 90
+            },
+            {
+                id: "net_007",
+                type: "网络诈骗",
+                title: "冒充公检法网站诈骗",
+                text: "您收到一封邮件，声称有法院传票需要您查看。邮件中包含一个链接，要求您登录网站查看处理。",
+                choices: [
+                    { text: "点击链接查看传票", correct: false },
+                    { text: "拨打12368司法服务热线核实", correct: true },
+                    { text: "回复邮件确认信息", correct: false },
+                    { text: "转发给律师朋友帮忙", correct: false }
+                ],
+                feedback: "正确做法：法院传票不会通过网站链接发送，应通过官方司法渠道核实。",
+                difficulty: "困难",
+                points: 150
+            },
+            
+            // 社交诈骗场景 (6个)
+            {
+                id: "social_001",
+                type: "社交诈骗",
+                title: "冒充熟人诈骗",
+                text: "您在社交软件上收到同学发来的消息，说在外地出车祸急需用钱，要求您立即转账救急。对方语气焦急，提供了银行卡号。",
+                choices: [
+                    { text: "立即转账救急", correct: false },
+                    { text: "通过电话或其他方式核实身份", correct: true },
+                    { text: "询问更多事故细节", correct: false },
+                    { text: "表示钱不够需要时间", correct: false }
+                ],
+                feedback: "正确做法：遇到网上借款请求务必通过多种渠道确认对方真实身份。",
+                difficulty: "中等",
+                points: 100
+            },
+            {
+                id: "social_002",
+                type: "社交诈骗",
+                title: "情感诈骗",
+                text: "您在交友平台认识了一位异性，经过一段时间聊天建立了感情。对方开始以各种理由向您借钱，承诺见面后归还。",
+                choices: [
+                    { text: "立即转账帮助", correct: false },
+                    { text: "要求对方提供身份证明", correct: true },
+                    { text: "少量借款尝试", correct: false },
+                    { text: "约定见面后再借", correct: false }
+                ],
+                feedback: "正确做法：网络身份信息都可能造假，不要涉及金钱交易，保护好自己的财产安全。",
+                difficulty: "困难",
+                points: 150
+            },
+            {
+                id: "social_003",
+                type: "社交诈骗",
+                title: "虚假求助诈骗",
+                text: "您在社交平台看到一位自称是贫困学生的求助信息，提供了学生证照片和困难证明，请求好心人捐款帮助完成学业。",
+                choices: [
+                    { text: "立即捐款帮助", correct: false },
+                    { text: "通过正规公益渠道捐款", correct: true },
+                    { text: "转发给朋友一起帮助", correct: false },
+                    { text: "要求更多证明材料", correct: false }
+                ],
+                feedback: "正确做法：捐款应通过正规公益机构，不要直接给个人转账，避免被骗。",
+                difficulty: "中等",
+                points: 90
+            },
+            {
+                id: "social_004",
+                type: "社交诈骗",
+                title: "情感诈骗（杀猪盘）",
+                text: "您在社交平台认识了一位投资专家，经过长期感情培养后，对方向您推荐一个稳赚不赔的投资项目，承诺高额回报。",
+                choices: [
+                    { text: "立即投资参与", correct: false },
+                    { text: "拒绝投资并保持警惕", correct: true },
+                    { text: "少量投资尝试", correct: false },
+                    { text: "咨询朋友意见", correct: false }
+                ],
+                feedback: "正确做法：任何通过感情诱导的投资都是诈骗，要保持理性判断。",
+                difficulty: "困难",
+                points: 150
+            },
+            {
+                id: "social_005",
+                type: "社交诈骗",
+                title: "冒充海外代购诈骗",
+                text: "您在社交平台看到有人提供海外代购服务，声称可以低价购买奢侈品。对方要求支付定金，承诺收到货后付尾款。",
+                choices: [
+                    { text: "立即支付定金", correct: false },
+                    { text: "要求对方提供正规购买凭证", correct: true },
+                    { text: "少量定金尝试", correct: false },
+                    { text: "推荐给需要的朋友", correct: false }
+                ],
+                feedback: "正确做法：代购商品应该要求提供正规购买凭证，避免支付定金被骗。",
+                difficulty: "中等",
+                points: 100
+            },
+            {
+                id: "social_006",
+                type: "社交诈骗",
+                title: "虚假招聘诈骗",
+                text: "您在招聘平台看到高薪职位，联系后对方以培训费、保证金等名义要求您缴纳各种费用，承诺入职后返还。",
+                choices: [
+                    { text: "缴纳费用争取职位", correct: false },
+                    { text: "核实公司资质和招聘信息", correct: true },
+                    { text: "少量费用尝试", correct: false },
+                    { text: "推荐给求职的朋友", correct: false }
+                ],
+                feedback: "正确做法：任何要求入职前缴纳费用的招聘都是诈骗，正规公司不会提前收费。",
+                difficulty: "中等",
+                points: 90
+            }
+        ];
+
+        // 屏幕切换函数
+        function switchScreen(screenId) {
+            // 如果当前有游戏完成弹窗显示，先关闭它
+            if (window.autoCloseTimer) {
+                clearTimeout(window.autoCloseTimer);
+                window.autoCloseTimer = null;
+            }
+            
+            // 清除游戏内容中的完成弹窗
+            const gameScreen = document.getElementById('game-screen');
+            if (gameScreen) {
+                const gameContent = gameScreen.querySelector('.game-content');
+                if (gameContent && gameContent.querySelector('.game-complete-overlay')) {
+                    gameContent.innerHTML = '';
+                }
+            }
+            
+            // 更新导航激活状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 激活对应导航项
+            const navItems = document.querySelectorAll('.nav-item');
+            for (let item of navItems) {
+                if (item.textContent.includes(getScreenName(screenId))) {
+                    item.classList.add('active');
+                    break;
+                }
+            }
+
+            // 切换屏幕显示
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function getScreenName(screenId) {
+            const names = {
+                'main-menu': '主菜单',
+                'game-screen': '开始挑战',
+                'scenario-library': '场景库',
+                'tutorial': '防诈骗教程',
+                'achievements': '我的成就',
+                'stats': '学习统计'
+            };
+            return names[screenId] || '';
+        }
+
+        // 开始游戏
+        function startGame() {
+            // 显示加载动画
+            showLoading();
+            
+            // 重置游戏数据
+            gameData.currentScore = 0;
+            gameData.currentLevel = 1;
+            gameData.streak = 0;
+            gameData.answeredScenarios = [];
+            gameData.currentMode = 'random';
+            gameData.currentCategory = '';
+            
+            // 初始化会话统计
+            initSessionStats();
+            
+            // 初始化剩余题目列表（所有场景）
+            gameData.remainingScenarios = [...scenarios];
+            
+            // 延迟执行，显示加载效果
+            setTimeout(() => {
+                hideLoading();
+                switchScreen('game-screen');
+                loadRandomScenario();
+            }, 1000);
+        }
+
+        // 加载随机场景
+        function loadRandomScenario() {
+            // 检查是否还有剩余题目
+            if (gameData.remainingScenarios.length === 0) {
+                // 所有题目已答完，显示完成信息
+                showGameComplete();
+                return;
+            }
+            
+            // 从剩余题目中随机选择一个
+            const randomIndex = Math.floor(Math.random() * gameData.remainingScenarios.length);
+            const scenario = gameData.remainingScenarios[randomIndex];
+            
+            // 从剩余题目列表中移除当前题目
+            gameData.remainingScenarios.splice(randomIndex, 1);
+            
+            // 记录当前场景ID
+            gameData.currentScenarioId = scenario.id;
+            
+            // 更新界面
+            document.getElementById('scenario-title').textContent = scenario.title;
+            document.getElementById('scenario-text').textContent = scenario.text;
+            document.getElementById('game-score').textContent = gameData.currentScore;
+            document.getElementById('game-level').textContent = gameData.currentLevel;
+            document.getElementById('game-streak').textContent = gameData.streak;
+            
+            // 清空选项容器
+            const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = '';
+            
+            // 随机打乱选项顺序
+            const shuffledChoices = [...scenario.choices];
+            for (let i = shuffledChoices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledChoices[i], shuffledChoices[j]] = [shuffledChoices[j], shuffledChoices[i]];
+            }
+            
+            // 添加选项按钮（随机顺序）
+            shuffledChoices.forEach((choice, index) => {
+                const button = document.createElement('button');
+                button.className = 'choice-btn';
+                button.textContent = `${String.fromCharCode(65 + index)}. ${choice.text}`;
+                button.onclick = () => selectChoice(choice.correct, scenario.feedback);
+                choicesContainer.appendChild(button);
+            });
+            
+            // 隐藏反馈面板
+            document.getElementById('feedback-panel').classList.add('hidden');
+        }
+
+        // 选择答案
+        function selectChoice(isCorrect, feedback) {
+            const buttons = document.querySelectorAll('.choice-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                btn.style.cursor = 'not-allowed';
+            });
+
+            // 显示正确/错误样式
+            buttons.forEach((btn, index) => {
+                const choiceText = btn.textContent.substring(3); // 移除"A. "前缀
+                const scenario = scenarios.find(s => 
+                    s.choices.some(c => c.text === choiceText)
+                );
+                if (scenario) {
+                    const choice = scenario.choices.find(c => c.text === choiceText);
+                    if (choice) {
+                        btn.classList.add(choice.correct ? 'correct' : 'incorrect');
+                    }
+                }
+            });
+
+            // 更新分数和连击
+            if (isCorrect) {
+                gameData.currentScore += 10;
+                gameData.streak++;
+                if (gameData.streak > gameData.bestStreak) {
+                    gameData.bestStreak = gameData.streak;
+                }
+            } else {
+                gameData.streak = 0;
+            }
+            
+            gameData.totalScore = gameData.currentScore;
+            gameData.completedScenarios++;
+            
+            // 更新会话统计
+            updateSessionStats(isCorrect);
+            
+            // 记录已答题目
+            if (gameData.currentScenarioId && !gameData.answeredScenarios.includes(gameData.currentScenarioId)) {
+                gameData.answeredScenarios.push(gameData.currentScenarioId);
+            }
+
+            // 显示反馈
+            const feedbackPanel = document.getElementById('feedback-panel');
+            document.getElementById('feedback-text').textContent = feedback;
+            feedbackPanel.classList.remove('hidden');
+            
+            // 更新统计显示
+            updateStats();
+        }
+
+        // 下一题
+        function nextScenario() {
+            gameData.currentLevel++;
+            
+            // 检查是否还有剩余题目
+            if (gameData.remainingScenarios.length === 0) {
+                showGameComplete();
+            } else {
+                loadRandomScenario();
+            }
+        }
+
+        // 显示游戏完成信息
+        function showGameComplete() {
+            try {
+                const gameScreen = document.getElementById('game-screen');
+                if (!gameScreen) {
+                    console.error('游戏界面元素未找到');
+                    return;
+                }
+                
+                let gameContent = gameScreen.querySelector('.game-content');
+                if (!gameContent) {
+                    // 如果游戏内容容器不存在，创建它
+                    gameContent = document.createElement('div');
+                    gameContent.className = 'game-content';
+                    gameScreen.appendChild(gameContent);
+                }
+                
+                // 计算准确率
+                const totalQuestions = gameData.answeredScenarios.length;
+                const correctAnswers = gameData.completedScenarios;
+                const accuracyRate = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+                
+                // 生成鼓励性语言
+                const encouragement = generateEncouragement(accuracyRate, gameData.bestStreak);
+                
+                // 生成表现评价
+                const performance = generatePerformance(accuracyRate);
+                
+                // 创建完成界面
+                const completeHTML = `
+                    <div class="game-complete-overlay" id="game-complete-overlay">
+                        <div class="game-complete-content">
+                            <!-- 关闭按钮 -->
+                            <button class="close-btn" onclick="closeGameComplete()">×</button>
+                            
+                            <h2 class="game-complete-title">🎉 恭喜完成挑战！</h2>
+                            
+                            <div class="challenge-summary">
+                                <h3 style="font-size: 16px; margin-bottom: 12px; color: #2c3e50;">📊 挑战总结</h3>
+                                <div class="summary-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div class="summary-stat" style="font-size: 13px; line-height: 1.4;">
+                                        <span class="stat-icon">🎯</span>
+                                        <span class="stat-label">准确率：</span>
+                                        <span class="stat-value">${accuracyRate}%</span>
+                                    </div>
+                                    <div class="summary-stat" style="font-size: 13px; line-height: 1.4;">
+                                        <span class="stat-icon">⭐</span>
+                                        <span class="stat-label">评价：</span>
+                                        <span class="stat-value">${performance}</span>
+                                    </div>
+                                    <div class="summary-stat" style="font-size: 13px; line-height: 1.4;">
+                                        <span class="stat-icon">🔥</span>
+                                        <span class="stat-label">连击：</span>
+                                        <span class="stat-value">${gameData.bestStreak}题</span>
+                                    </div>
+                                    <div class="summary-stat" style="font-size: 13px; line-height: 1.4;">
+                                        <span class="stat-icon">🏆</span>
+                                        <span class="stat-label">得分：</span>
+                                        <span class="stat-value">${gameData.currentScore}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="encouragement-message" style="margin: 15px 0;">
+                                <h3 style="font-size: 16px; margin-bottom: 8px; color: #e67e22;">💪 加油</h3>
+                                <p class="encouragement-text" style="font-size: 14px; line-height: 1.4; margin: 0; color: #555;">${encouragement}</p>
+                            </div>
+                            
+                            <!-- 倒计时提示 -->
+                            <div class="countdown-tip" style="margin: 12px 0;">
+                                <span id="countdown-text" style="font-size: 12px; color: #888;">5秒后自动关闭...</span>
+                            </div>
+                            
+                            <div class="game-complete-buttons">
+                                <button class="btn btn-primary" onclick="backToMenu()" style="padding: 8px 16px; font-size: 14px;">返回主菜单</button>
+                                <button class="btn btn-secondary" onclick="restartGame()" style="padding: 8px 16px; font-size: 14px;">重新开始</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 替换游戏内容
+                gameContent.innerHTML = completeHTML;
+                
+                // 启动5秒自动关闭计时器
+                startAutoCloseTimer();
+                
+                console.log('鼓励弹窗显示成功，5秒后自动关闭');
+            } catch (error) {
+                console.error('显示鼓励弹窗失败:', error);
+            }
+        }
+
+        // 关闭游戏完成弹窗
+        function closeGameComplete() {
+            // 清除自动关闭计时器
+            if (window.autoCloseTimer) {
+                clearTimeout(window.autoCloseTimer);
+                window.autoCloseTimer = null;
+            }
+            
+            // 返回主菜单
+            backToMenu();
+        }
+
+        // 启动自动关闭计时器
+        function startAutoCloseTimer() {
+            let countdown = 5;
+            const countdownElement = document.getElementById('countdown-text');
+            
+            // 更新倒计时显示
+            if (countdownElement) {
+                countdownElement.textContent = `${countdown}秒后自动关闭...`;
+            }
+            
+            // 每秒更新一次倒计时
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdownElement) {
+                    countdownElement.textContent = `${countdown}秒后自动关闭...`;
+                }
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    closeGameComplete();
+                }
+            }, 1000);
+            
+            // 设置5秒后自动关闭
+            window.autoCloseTimer = setTimeout(() => {
+                clearInterval(countdownInterval);
+                closeGameComplete();
+            }, 5000);
+        }
+        
+        // 生成鼓励性语言
+        function generateEncouragement(accuracy, bestStreak) {
+            if (accuracy >= 90) {
+                return "太棒了！您对诈骗防范知识掌握得非常扎实，继续保持这样的学习热情！";
+            } else if (accuracy >= 70) {
+                return "表现不错！您已经掌握了大部分诈骗防范知识，再多练习几次会更好！";
+            } else if (accuracy >= 50) {
+                return "有进步空间！继续学习，您会越来越擅长识别各种诈骗手段！";
+            } else {
+                return "别灰心！每一次挑战都是学习的机会，坚持下去您会看到进步！";
+            }
+        }
+        
+        // 生成表现评价
+        function generatePerformance(accuracy) {
+            if (accuracy >= 90) return "卓越表现";
+            if (accuracy >= 80) return "优秀表现";
+            if (accuracy >= 70) return "良好表现";
+            if (accuracy >= 60) return "合格表现";
+            return "继续努力";
+        }
+
+        // 重新开始游戏
+        function restartGame() {
+            startGame();
+        }
+
+        // 返回主菜单
+        function backToMenu() {
+            switchScreen('main-menu');
+            updateStats();
+        }
+
+        // 初始化会话统计
+        function initSessionStats() {
+            gameData.sessionStats = {
+                startTime: new Date(),
+                correctAnswers: 0,
+                totalAnswers: 0,
+                sessionScore: 0,
+                sessionBestStreak: 0,
+                completedScenarios: 0,
+                unlockedBadges: []
+            };
+        }
+
+        // 更新会话统计
+        function updateSessionStats(isCorrect) {
+            gameData.sessionStats.totalAnswers++;
+            if (isCorrect) {
+                gameData.sessionStats.correctAnswers++;
+            }
+            
+            // 更新连击记录
+            if (gameData.streak > gameData.sessionStats.sessionBestStreak) {
+                gameData.sessionStats.sessionBestStreak = gameData.streak;
+            }
+            
+            // 更新分数
+            gameData.sessionStats.sessionScore = gameData.currentScore;
+            
+            // 更新完成场景数
+            gameData.sessionStats.completedScenarios = gameData.completedScenarios;
+            
+            // 检查成就徽章
+            checkSessionBadges();
+        }
+
+        // 检查会话成就徽章
+        function checkSessionBadges() {
+            const stats = gameData.sessionStats;
+            const badges = [];
+            
+            // 准确率徽章
+            const accuracy = stats.totalAnswers > 0 ? (stats.correctAnswers / stats.totalAnswers) * 100 : 0;
+            if (accuracy >= 90) {
+                badges.push({ id: 'accuracy_expert', name: '准确率专家', icon: '🎯', description: '本次准确率达到90%以上' });
+            } else if (accuracy >= 80) {
+                badges.push({ id: 'accuracy_master', name: '准确率高手', icon: '🎯', description: '本次准确率达到80%以上' });
+            } else if (accuracy >= 70) {
+                badges.push({ id: 'accuracy_learner', name: '准确率学习者', icon: '🎯', description: '本次准确率达到70%以上' });
+            }
+            
+            // 连击徽章
+            if (stats.sessionBestStreak >= 10) {
+                badges.push({ id: 'streak_master', name: '连击大师', icon: '🔥', description: '本次最佳连击达到10题' });
+            } else if (stats.sessionBestStreak >= 5) {
+                badges.push({ id: 'streak_expert', name: '连击高手', icon: '🔥', description: '本次最佳连击达到5题' });
+            }
+            
+            // 分数徽章
+            if (stats.sessionScore >= 500) {
+                badges.push({ id: 'score_champion', name: '分数冠军', icon: '⭐', description: '本次获得500分以上' });
+            } else if (stats.sessionScore >= 200) {
+                badges.push({ id: 'score_expert', name: '分数高手', icon: '⭐', description: '本次获得200分以上' });
+            }
+            
+            // 完成场景徽章
+            if (stats.completedScenarios >= 10) {
+                badges.push({ id: 'scenario_master', name: '场景大师', icon: '📚', description: '本次完成10个以上场景' });
+            } else if (stats.completedScenarios >= 5) {
+                badges.push({ id: 'scenario_expert', name: '场景高手', icon: '📚', description: '本次完成5个以上场景' });
+            }
+            
+            // 去重并更新徽章列表
+            const existingBadges = new Set(gameData.sessionStats.unlockedBadges.map(b => b.id));
+            badges.forEach(badge => {
+                if (!existingBadges.has(badge.id)) {
+                    gameData.sessionStats.unlockedBadges.push(badge);
+                }
+            });
+        }
+
+        // 生成鼓励性评价
+        function generateSessionEncouragement() {
+            const stats = gameData.sessionStats;
+            const accuracy = stats.totalAnswers > 0 ? (stats.correctAnswers / stats.totalAnswers) * 100 : 0;
+            
+            if (accuracy >= 90) {
+                return "太棒了！你的防诈骗知识非常扎实，准确率达到了专家级别！继续保持这样的学习状态！";
+            } else if (accuracy >= 80) {
+                return "表现优秀！你对诈骗场景有很好的识别能力，准确率达到了高手水平！";
+            } else if (accuracy >= 70) {
+                return "做得不错！你已经掌握了基本的防诈骗知识，继续努力提升！";
+            } else if (accuracy >= 50) {
+                return "有进步空间！通过这次学习，你对诈骗场景有了更深的了解，继续加油！";
+            } else {
+                return "这是很好的开始！防诈骗学习需要时间积累，每次练习都会让你更强大！";
+            }
+        }
+
+        // 更新我的成就页面
+        function updateAchievementsScreen() {
+            const stats = gameData.sessionStats;
+            const accuracy = stats.totalAnswers > 0 ? Math.round((stats.correctAnswers / stats.totalAnswers) * 100) : 0;
+            
+            // 更新统计数字
+            document.getElementById('session-accuracy').textContent = accuracy + '%';
+            document.getElementById('session-score').textContent = stats.sessionScore;
+            document.getElementById('session-streak').textContent = stats.sessionBestStreak;
+            document.getElementById('session-completed').textContent = stats.completedScenarios;
+            
+            // 更新鼓励评价
+            document.getElementById('session-encouragement').innerHTML = '<p>' + generateSessionEncouragement() + '</p>';
+            
+            // 更新成就徽章
+            updateSessionBadges();
+        }
+
+        // 更新会话徽章显示
+        function updateSessionBadges() {
+            const badgesContainer = document.getElementById('session-badges');
+            const badges = gameData.sessionStats.unlockedBadges;
+            
+            if (badges.length === 0) {
+                badgesContainer.innerHTML = '<div class="no-badges"><p>继续努力，解锁更多成就徽章！</p></div>';
+                return;
+            }
+            
+            badgesContainer.innerHTML = badges.map(badge => `
+                <div class="badge-item unlocked">
+                    <div class="badge-icon">${badge.icon}</div>
+                    <div class="badge-name">${badge.name}</div>
+                    <div class="badge-description">${badge.description}</div>
+                </div>
+            `).join('');
+        }
+
+        // 切换到我的成就页面
+        function showAchievements() {
+            updateAchievementsScreen();
+            switchScreen('achievements');
+        }
+
+        // 清理会话数据（游戏关闭或退出时调用）
+        function clearSessionData() {
+            if (gameData.sessionStats) {
+                // 重置会话统计
+                gameData.sessionStats = {
+                    startTime: new Date(),
+                    correctAnswers: 0,
+                    totalAnswers: 0,
+                    sessionScore: 0,
+                    sessionBestStreak: 0,
+                    completedScenarios: 0,
+                    unlockedBadges: []
+                };
+            }
+            
+            // 更新成就页面显示清零状态
+            updateAchievementsScreen();
+        }
+
+        // 显示加载动画
+        function showLoading() {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+        }
+
+        // 隐藏加载动画
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+        }
+
+        // 确保游戏界面已正确初始化
+        function ensureGameScreenInitialized() {
+            const gameScreen = document.getElementById('game-screen');
+            if (!gameScreen) {
+                console.error('游戏界面元素未找到');
+                return false;
+            }
+            
+            // 检查游戏内容容器是否存在
+            let gameContent = gameScreen.querySelector('.game-content');
+            if (!gameContent) {
+                // 如果不存在，创建游戏内容容器
+                gameContent = document.createElement('div');
+                gameContent.className = 'game-content';
+                gameScreen.appendChild(gameContent);
+                console.log('已创建游戏内容容器');
+            }
+            
+            return true;
+        }
+
+        // 更新统计数据
+        function updateStats() {
+            // 侧边栏统计
+            document.getElementById('sidebar-streak').textContent = gameData.streak;
+            document.getElementById('sidebar-best-streak').textContent = gameData.bestStreak;
+            document.getElementById('sidebar-total-score').textContent = gameData.totalScore;
+            document.getElementById('sidebar-completed').textContent = gameData.completedScenarios;
+            
+            // 主菜单统计
+            document.getElementById('main-streak').textContent = gameData.streak;
+            document.getElementById('main-best-streak').textContent = gameData.bestStreak;
+            document.getElementById('main-total-score').textContent = gameData.totalScore;
+            document.getElementById('main-completed').textContent = gameData.completedScenarios;
+        }
+
+        // 场景库功能
+        let selectedCategory = '';
+        let selectedScenarioId = '';
+
+        // 选择分类
+        function selectCategory(category) {
+            selectedCategory = category;
+            
+            // 更新分类卡片激活状态
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            
+            // 显示该分类的场景列表
+            displayScenariosByCategory(category);
+        }
+
+        // 返回分类选择
+        function backToCategories() {
+            selectedCategory = '';
+            
+            // 清除分类卡片激活状态
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // 清空场景列表
+            const scenarioList = document.getElementById('scenario-list');
+            scenarioList.innerHTML = '';
+        }
+
+        // 显示分类场景列表
+        function displayScenariosByCategory(category) {
+            const scenarioList = document.getElementById('scenario-list');
+            scenarioList.innerHTML = '';
+            
+            // 添加分类标题和返回按钮
+            const categoryHeader = document.createElement('div');
+            categoryHeader.className = 'scenario-library-header';
+            categoryHeader.innerHTML = `
+                <button class="btn btn-secondary" onclick="backToCategories()">← 返回分类</button>
+                <h2>${category}场景库</h2>
+                <p>选择具体场景开始挑战</p>
+            `;
+            scenarioList.appendChild(categoryHeader);
+            
+            // 添加列表头部
+            const listHeader = document.createElement('div');
+            listHeader.className = 'scenario-list-header';
+            listHeader.innerHTML = `
+                <span>场景标题</span>
+                <span>难度</span>
+                <span>分数</span>
+                <span>操作</span>
+            `;
+            scenarioList.appendChild(listHeader);
+            
+            // 筛选该分类的场景
+            const filteredScenarios = scenarios.filter(scenario => scenario.type === category);
+            
+            // 添加场景项
+            filteredScenarios.forEach(scenario => {
+                const scenarioItem = document.createElement('div');
+                scenarioItem.className = 'scenario-item';
+                scenarioItem.innerHTML = `
+                    <span class="scenario-title">${scenario.title}</span>
+                    <span class="scenario-difficulty">
+                        <span class="difficulty-tag ${getDifficultyClass(scenario.difficulty)}">${scenario.difficulty}</span>
+                    </span>
+                    <span class="scenario-points">${scenario.points}分</span>
+                    <button class="start-scenario-btn" onclick="startScenarioFromLibrary('${scenario.id}')">开始挑战</button>
+                `;
+                scenarioList.appendChild(scenarioItem);
+            });
+        }
+
+        // 获取难度样式类
+        function getDifficultyClass(difficulty) {
+            const classes = {
+                '简单': 'easy',
+                '中等': 'medium',
+                '困难': 'hard'
+            };
+            return classes[difficulty] || 'easy';
+        }
+
+        // 从场景库开始特定场景
+        function startScenarioFromLibrary(scenarioId) {
+            selectedScenarioId = scenarioId;
+            
+            // 显示加载动画
+            showLoading();
+            
+            // 重置游戏数据
+            gameData.currentScore = 0;
+            gameData.currentLevel = 1;
+            gameData.streak = 0;
+            gameData.answeredScenarios = [];
+            gameData.currentMode = 'category';
+            gameData.currentCategory = selectedCategory;
+            
+            // 初始化剩余题目列表（当前分类的所有场景）
+            gameData.remainingScenarios = scenarios.filter(scenario => scenario.type === selectedCategory);
+            
+            // 延迟执行，显示加载效果
+            setTimeout(() => {
+                hideLoading();
+                switchScreen('game-screen');
+                loadSpecificScenario(scenarioId);
+            }, 1000);
+        }
+
+        // 加载特定场景
+        function loadSpecificScenario(scenarioId) {
+            // 检查是否还有剩余题目
+            if (gameData.remainingScenarios.length === 0) {
+                // 所有题目已答完，显示完成信息
+                // 确保游戏界面已正确初始化
+                ensureGameScreenInitialized();
+                showGameComplete();
+                return;
+            }
+            
+            // 从剩余题目中随机选择一个
+            const randomIndex = Math.floor(Math.random() * gameData.remainingScenarios.length);
+            const scenario = gameData.remainingScenarios[randomIndex];
+            
+            // 从剩余题目列表中移除当前题目
+            gameData.remainingScenarios.splice(randomIndex, 1);
+            
+            // 记录当前场景ID
+            gameData.currentScenarioId = scenario.id;
+            
+            // 更新界面
+            document.getElementById('scenario-title').textContent = scenario.title;
+            document.getElementById('scenario-text').textContent = scenario.text;
+            document.getElementById('game-score').textContent = gameData.currentScore;
+            document.getElementById('game-level').textContent = gameData.currentLevel;
+            document.getElementById('game-streak').textContent = gameData.streak;
+            
+            // 清空选项容器
+            const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = '';
+            
+            // 随机打乱选项顺序
+            const shuffledChoices = [...scenario.choices];
+            for (let i = shuffledChoices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledChoices[i], shuffledChoices[j]] = [shuffledChoices[j], shuffledChoices[i]];
+            }
+            
+            // 添加选项按钮（随机顺序）
+            shuffledChoices.forEach((choice, index) => {
+                const button = document.createElement('button');
+                button.className = 'choice-btn';
+                button.textContent = `${String.fromCharCode(65 + index)}. ${choice.text}`;
+                button.onclick = () => selectChoice(choice.correct, scenario.feedback);
+                choicesContainer.appendChild(button);
+            });
+            
+            // 隐藏反馈面板
+            document.getElementById('feedback-panel').classList.add('hidden');
+        }
+
+        // 教程模块功能
+        function initTutorial() {
+            try {
+                // 检查教程导航按钮是否存在
+                const navButtons = document.querySelectorAll('.tutorial-nav-btn');
+                if (navButtons.length === 0) {
+                    console.warn('未找到教程导航按钮');
+                    return;
+                }
+                
+                // 绑定教程导航按钮事件
+                navButtons.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const section = this.getAttribute('data-section');
+                        switchTutorialSection(section);
+                    });
+                });
+                
+                // 默认显示第一个部分
+                switchTutorialSection('victims');
+                
+                console.log('教程模块初始化成功');
+            } catch (error) {
+                console.error('教程模块初始化失败:', error);
+            }
+        }
+
+        // 切换教程部分
+        function switchTutorialSection(section) {
+            try {
+                // 移除所有导航按钮的激活状态
+                document.querySelectorAll('.tutorial-nav-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // 隐藏所有教程部分
+                document.querySelectorAll('.tutorial-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // 激活当前导航按钮
+                const activeNavBtn = document.querySelector(`[data-section="${section}"]`);
+                if (activeNavBtn) {
+                    activeNavBtn.classList.add('active');
+                }
+                
+                // 显示当前教程部分
+                const activeSection = document.getElementById(`section-${section}`);
+                if (activeSection) {
+                    activeSection.classList.add('active');
+                }
+            } catch (error) {
+                console.error('切换教程部分失败:', error);
+            }
+        }
+
+        // 开始练习（跳转到游戏界面）
+        function startPractice() {
+            // 重置游戏数据为随机挑战模式
+            gameData.currentScore = 0;
+            gameData.currentLevel = 1;
+            gameData.streak = 0;
+            gameData.answeredScenarios = [];
+            gameData.currentMode = 'random';
+            gameData.remainingScenarios = [...scenarios]; // 复制所有场景
+            
+            // 切换到游戏界面
+            switchScreen('game-screen');
+            
+            // 加载第一个随机场景
+            setTimeout(() => {
+                nextScenario();
+            }, 500);
+        }
+
+        // 初始化
+        function init() {
+            updateStats();
+            
+            // 初始化场景库：默认选择第一个分类
+            if (scenarios.length > 0) {
+                const firstCategory = scenarios[0].type;
+                selectCategory(firstCategory);
+            }
+            
+            console.log('反诈先锋桌面版初始化完成');
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            init();
+            
+            // 延迟初始化教程模块，确保DOM元素完全加载
+            setTimeout(() => {
+                // 检查教程元素是否存在
+                const tutorialElements = document.querySelectorAll('.tutorial-nav-btn, .tutorial-section');
+                if (tutorialElements.length > 0) {
+                    initTutorial();
+                } else {
+                    console.log('教程模块元素未找到，跳过教程初始化');
+                }
+            }, 100);
+        });
+
+        // 页面卸载时清理会话数据
+        window.addEventListener('beforeunload', function() {
+            clearSessionData();
+        });
+
+        // 页面可见性变化时清理会话数据（切换到其他标签页或最小化）
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                clearSessionData();
+            }
+        });
+    </script>
+</body>
+</html>
