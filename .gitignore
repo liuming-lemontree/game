@@ -119,3 +119,11 @@ config.local.json
 # 依赖锁定文件（根据需要选择保留）
 # package-lock.json
 # yarn.lock
+node_modules
+.codex
+out
+dist
+*.vsix
+__pycache__
+.next
+.github
