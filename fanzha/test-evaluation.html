@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习评价显示测试</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .test-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        .test-header h1 {
+            margin: 0;
+            font-size: 2em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .test-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .test-btn {
+            padding: 10px 20px;
+            background: white;
+            color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .test-btn:hover {
+            background: #007bff;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .mock-achievements-page {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        .mock-page-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .mock-page-header h2 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 1.8em;
+        }
+        .width-indicator {
+            background: #007bff;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        .responsive-test {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+        }
+        .responsive-test p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>📈 学习评价显示测试</h1>
+            <p>测试不同学习评价文本的显示效果</p>
+        </div>
+
+        <div class="test-controls">
+            <button class="test-btn" onclick="showEvaluation('beginner')">初学者评价</button>
+            <button class="test-btn" onclick="showEvaluation('intermediate')">中级评价</button>
+            <button class="test-btn" onclick="showEvaluation('advanced')">高级评价</button>
+            <button class="test-btn" onclick="showEvaluation('expert')">专家评价</button>
+            <button class="test-btn" onclick="showEvaluation('long')">长文本测试</button>
+        </div>
+
+        <div class="mock-achievements-page" style="position: relative;">
+            <span class="width-indicator">max-width: 800px</span>
+
+            <div class="mock-page-header">
+                <h2>🏆 辉煌成就</h2>
+            </div>
+
+            <div id="evaluation-container">
+                <!-- 学习评价将在这里显示 -->
+            </div>
+
+            <div class="achievements-container">
+                <h3>🎯 成就展示</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2em;">🎯</div>
+                        <h4>初学者</h4>
+                        <p>完成第一个题目</p>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2em;">📚</div>
+                        <h4>学习达人</h4>
+                        <p>完成10个题目</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="responsive-test">
+            <p>📱 响应式测试：调整浏览器窗口大小查看移动端适配效果</p>
+            <p>💡 提示：在移动设备上，评价区域应该自动调整字体大小和间距</p>
+        </div>
+    </div>
+
+    <script>
+        const evaluationData = {
+            beginner: {
+                evaluation: '您还没有开始答题，快来体验反诈知识学习吧！',
+                encouragement: '建议先学习防诈教程，打好知识基础。每一次学习都是对自身安全的投资，继续加油！'
+            },
+            intermediate: {
+                evaluation: '您已经掌握了一些反诈知识，表现不错！',
+                encouragement: '建议多学习防诈知识，提高判断准确率！可以尝试挑战模式测试自己的掌握程度。'
+            },
+            advanced: {
+                evaluation: '您已经成为反诈知识达人，表现出色！',
+                encouragement: '继续保持学习的热情，可以将学到的知识分享给家人朋友，共同提高防范意识。'
+            },
+            expert: {
+                evaluation: '您是反诈知识的专家，令人敬佩！',
+                encouragement: '您已经具备了很强的防诈能力，建议尝试更高难度的挑战模式，或者帮助他人学习防诈知识。'
+            },
+            long: {
+                evaluation: '您在反诈知识学习的道路上取得了显著的进步，通过不断的学习和实践，您已经掌握了各种诈骗手段的识别方法，具备了很强的防范能力。这种持续学习的精神值得赞赏！',
+                encouragement: '学习反诈知识是一个持续的过程，新型诈骗手段层出不穷，建议您保持学习的热情，定期关注最新的诈骗案例和防范技巧。同时，您可以将所学的知识运用到实际生活中，保护自己和身边的人免受诈骗侵害。记住，防范诈骗不仅是对自己负责，也是对家人朋友的责任。继续保持这份警惕性和学习热情，您将成为身边人的反诈守护者！'
+            }
+        };
+
+        function showEvaluation(type) {
+            const container = document.getElementById('evaluation-container');
+            const data = evaluationData[type];
+
+            const evaluationHtml = `
+                <div class="evaluation-section">
+                    <div class="evaluation-header">
+                        <h3>📈 学习评价</h3>
+                    </div>
+                    <div class="evaluation-content">
+                        <div class="evaluation-text">${data.evaluation}</div>
+                        <div class="encouragement-text">${data.encouragement}</div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = evaluationHtml;
+
+            // 添加动画效果
+            const evaluationSection = container.querySelector('.evaluation-section');
+            evaluationSection.style.opacity = '0';
+            evaluationSection.style.transform = 'translateY(-10px)';
+
+            setTimeout(() => {
+                evaluationSection.style.transition = 'all 0.3s ease';
+                evaluationSection.style.opacity = '1';
+                evaluationSection.style.transform = 'translateY(0)';
+            }, 100);
+        }
+
+        // 页面加载时显示初学者评价
+        window.addEventListener('load', () => {
+            showEvaluation('beginner');
+        });
+
+        // 窗口大小改变时的响应式测试
+        window.addEventListener('resize', () => {
+            clearTimeout(window.resizeTimer);
+            window.resizeTimer = setTimeout(() => {
+                console.log('窗口大小已改变，评价区域应该自动适配');
+            }, 300);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>反诈先锋 - 教育游戏</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>反诈先锋</h1>
+            <div class="score-board">
+                <span>积分: <span id="score-value">0</span></span>
+            </div>
+        </header>
+
+        <!-- 游戏容器 -->
+        <div id="game-container" class="game-container">
+            <!-- 场景容器 -->
+            <div id="scenario-container" class="scenario-container">
+                <div class="scenario-header">
+                    <span id="scenario-type" class="scenario-type"></span>
+                    <h2 id="scenario-title" class="scenario-title"></h2>
+                </div>
+                <div class="scenario-content">
+                    <div id="scenario-sender" class="scenario-sender"></div>
+                    <div id="scenario-content" class="scenario-text"></div>
+                </div>
+                <div id="options" class="options-container"></div>
+            </div>
+
+            <!-- 结果面板 -->
+            <div id="result" class="result-panel" style="display: none;">
+                <div class="result-feedback" id="result-feedback"></div>
+                <div class="result-tips" id="result-tips"></div>
+                <button id="next-btn" class="btn next-btn">下一题</button>
+            </div>
+
+            <!-- 控制按钮 -->
+            <div class="controls" id="main-controls">
+                <button id="tutorial-btn" class="btn tutorial-btn">📚 防诈学习</button>
+                <button id="progress-btn" class="btn progress-btn">📈 学习进度</button>
+                <button id="challenge-btn" class="btn challenge-btn">⚔️ 挑战模式</button>
+                <button id="achievements-btn" class="btn achievements-btn">🏆 辉煌成就</button>
+                <button id="exit-btn" class="btn exit-btn">🚪 退出游戏</button>
+                <button id="restart-btn" class="btn restart-btn">🔄 重新开始</button>
+            </div>
+        </div>
+
+        <!-- 功能页面返回按钮 -->
+        <div class="controls" id="back-controls" style="display: none;">
+            <button id="back-to-main" class="btn back-btn">🔙 返回游戏</button>
+        </div>
+
+        <!-- 教程页面 -->
+        <div id="tutorial-page" class="content-page" style="display: none;">
+            <div class="page-header">
+                <h2>📚 防诈骗教程</h2>
+            </div>
+            <div id="tutorial-menu" class="tutorial-menu"></div>
+            <div id="tutorial-content" class="tutorial-content" style="display: none;"></div>
+        </div>
+
+        <!-- 成就页面 -->
+        <div id="achievements-page" class="content-page" style="display: none;">
+            <div class="page-header">
+                <h2>🏆 辉煌成就</h2>
+            </div>
+            <div id="achievements-container" class="achievements-container">
+                <!-- 动态生成成就内容 -->
+            </div>
+        </div>
+
+        <!-- 统计面板 -->
+        <div id="stats-panel" class="stats-panel" style="display: none;"></div>
+
+        <!-- 学习进度页面 -->
+        <div id="progress-page" class="content-page" style="display: none;">
+            <div class="page-header">
+                <h2>📈 学习进度</h2>
+            </div>
+            <div class="progress-content">
+                <!-- 总体进度 -->
+                <div class="progress-section">
+                    <h3>📊 总体学习进度</h3>
+                    <div class="overall-progress">
+                        <div class="progress-circle">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                <text x="18" y="20.35" class="percentage">0%</text>
+                            </svg>
+                        </div>
+                        <div class="progress-stats">
+                            <div class="stat-item">
+                                <span class="stat-value" id="total-answered">0</span>
+                                <span class="stat-label">已答题数</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="total-scenarios">40</span>
+                                <span class="stat-label">总题目数</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="accuracy-rate">0%</span>
+                                <span class="stat-label">正确率</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分类进度 -->
+                <div class="progress-section">
+                    <h3>📚 分类掌握情况</h3>
+                    <div class="category-progress" id="category-progress">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 难度进度 -->
+                <div class="progress-section">
+                    <h3>🎯 难度完成情况</h3>
+                    <div class="difficulty-progress" id="difficulty-progress">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 学习曲线 -->
+                <div class="progress-section">
+                    <h3>📈 学习曲线</h3>
+                    <div class="learning-chart">
+                        <canvas id="learning-canvas" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- 学习建议 -->
+                <div class="progress-section">
+                    <h3>💡 学习建议</h3>
+                    <div class="learning-suggestions" id="learning-suggestions">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 学习目标 -->
+                <div class="progress-section">
+                    <h3>🎯 学习目标</h3>
+                    <div class="learning-goals" id="learning-goals">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 挑战模式页面 -->
+        <div id="challenge-page" class="content-page" style="display: none;">
+            <div class="page-header">
+                <h2>⚔️ 挑战模式</h2>
+            </div>
+            <div class="challenge-modes">
+                <div class="challenge-mode" data-mode="timed">
+                    <h3>⏱️ 限时挑战</h3>
+                    <p>60秒内回答尽可能多的问题</p>
+                    <div class="difficulty-select">
+                        <label>难度选择：</label>
+                        <select id="timed-difficulty">
+                            <option value="all">全部难度</option>
+                            <option value="easy">简单</option>
+                            <option value="medium">中等</option>
+                            <option value="hard">困难</option>
+                        </select>
+                    </div>
+                    <button class="btn start-challenge-btn" data-mode="timed">开始挑战</button>
+                </div>
+                <div class="challenge-mode" data-mode="survival">
+                    <h3>💀 生存模式</h3>
+                    <p>答错即结束，看你能坚持多久</p>
+                    <div class="difficulty-select">
+                        <label>难度选择：</label>
+                        <select id="survival-difficulty">
+                            <option value="easy">简单</option>
+                            <option value="medium">中等</option>
+                            <option value="hard">困难</option>
+                            <option value="random">随机难度</option>
+                        </select>
+                    </div>
+                    <button class="btn start-challenge-btn" data-mode="survival">开始挑战</button>
+                </div>
+                <div class="challenge-mode" data-mode="speed">
+                    <h3>⚡ 极速模式</h3>
+                    <p>每题只有10秒思考时间</p>
+                    <div class="difficulty-select">
+                        <label>题目数量：</label>
+                        <select id="speed-count">
+                            <option value="10">10题</option>
+                            <option value="20">20题</option>
+                            <option value="30">30题</option>
+                        </select>
+                    </div>
+                    <button class="btn start-challenge-btn" data-mode="speed">开始挑战</button>
+                </div>
+            </div>
+            <div class="challenge-records">
+                <h3>🏆 挑战记录</h3>
+                <div id="challenge-records-list" class="records-list"></div>
+            </div>
+        </div>
+
+        <!-- 挑战游戏界面 -->
+        <div id="challenge-game" class="challenge-game" style="display: none;">
+            <div class="challenge-header">
+                <div class="challenge-info">
+                    <span id="challenge-mode-name" class="challenge-mode-name"></span>
+                    <span id="challenge-timer" class="challenge-timer">⏱️ 60</span>
+                    <span id="challenge-score" class="challenge-score">得分: 0</span>
+                    <span id="challenge-streak" class="challenge-streak">连击: 0</span>
+                </div>
+                <button id="quit-challenge" class="btn quit-btn">退出挑战</button>
+            </div>
+            <div class="challenge-scenario">
+                <div class="scenario-header">
+                    <span id="challenge-scenario-type" class="scenario-type"></span>
+                    <h2 id="challenge-scenario-title" class="scenario-title"></h2>
+                </div>
+                <div class="scenario-content">
+                    <div id="challenge-scenario-sender" class="scenario-sender"></div>
+                    <div id="challenge-scenario-content" class="scenario-text"></div>
+                </div>
+                <div id="challenge-options" class="options-container"></div>
+            </div>
+            <div class="challenge-progress">
+                <div class="progress-bar">
+                    <div id="challenge-progress-bar" class="progress-fill"></div>
+                </div>
+                <span id="challenge-progress-text">进度: 0/0</span>
+            </div>
+        </div>
+
+        <!-- 挑战结果界面 -->
+        <div id="challenge-result" class="challenge-result" style="display: none;">
+            <div class="result-content">
+                <h2 id="challenge-result-title">挑战结束</h2>
+                <div class="result-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">最终得分</span>
+                        <span id="final-score" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">正确率</span>
+                        <span id="final-accuracy" class="stat-value">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">最高连击</span>
+                        <span id="final-streak" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">用时</span>
+                        <span id="final-time" class="stat-value">0秒</span>
+                    </div>
+                </div>
+                <div class="result-buttons">
+                    <button id="retry-challenge" class="btn">再次挑战</button>
+                    <button id="back-to-menu" class="btn">返回菜单</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/scenarios.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/tutorial-content.js"></script>
+    <script src="js/tutorial.js"></script>
+    <script src="js/challenge.js"></script>
+    <script src="js/progress.js"></script>
+    <script src="js/pageManager.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>

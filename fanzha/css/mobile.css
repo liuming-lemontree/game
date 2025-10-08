@@ -1,0 +1,165 @@
+@media screen and (max-width: 768px) {
+  .game-container {
+    padding: 10px;
+  }
+  
+  .btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    min-width: 120px;
+  }
+  
+  .scenario-box {
+    padding: 15px;
+    margin: 10px 0;
+  }
+  
+  #options-container button {
+    margin: 8px 0;
+    padding: 12px;
+    font-size: 14px;
+  }
+  
+  /* 移动端面板适配 */
+  .controls {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .controls .btn {
+    width: 100%;
+    max-width: 280px;
+    margin: 4px 0;
+  }
+  
+  .tutorial-menu, .tutorial-content, .achievements-container, .stats-container {
+    max-width: 95vw;
+    margin: 10px;
+  }
+  
+  .panel-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .panel-header h2 {
+    font-size: 1.4em;
+  }
+  
+  .achievements-grid {
+    gap: 6px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .achievement-item {
+    padding: 8px 12px;
+    gap: 10px;
+  }
+  
+  .stat-item {
+    padding: 15px;
+  }
+  
+  .stat-number {
+    font-size: 1.8em;
+  }
+
+  /* 移动端成就页面优化 - 横条式显示 */
+  .summary-number {
+    font-size: 1.6em;
+  }
+
+  .summary-label {
+    font-size: 0.85em;
+  }
+
+  .achievement-icon {
+    font-size: 1.4em;
+    width: 28px;
+  }
+
+  .achievement-title {
+    font-size: 0.85em;
+  }
+
+  .achievement-description {
+    font-size: 0.7em;
+  }
+
+  .achievement-status {
+    font-size: 0.65em;
+    padding: 3px 6px;
+  }
+
+  .achievements-grid {
+    gap: 4px !important;
+  }
+
+  .achievement-item {
+    min-height: 45px !important;
+    padding: 6px 10px !important;
+  }
+
+  .category-title {
+    font-size: 1.1em;
+  }
+
+  .evaluation-text {
+    font-size: 0.9em;
+  }
+
+  .encouragement-text {
+    font-size: 0.8em;
+  }
+
+  /* 确保内容可以完整显示 */
+  .content-page {
+    overflow: visible !important;
+  }
+
+  .achievements-container {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+}
+
+/* 触控优化 */
+button {
+  touch-action: manipulation;
+  min-height: 44px;
+}
+
+/* 改善移动端滚动体验 */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+/* 确保长内容可以滚动 */
+.content-page, .game-container, .achievements-container, .stats-container {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 横屏适配 */
+@media screen and (orientation: landscape) {
+  .game-header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+  }
+  
+  .game-main {
+    margin-top: 80px;
+  }
+}

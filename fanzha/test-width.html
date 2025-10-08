@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教程页面宽度测试</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <style>
+        .test-container {
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+        .width-indicator {
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        .comparison {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .comparison-item {
+            flex: 1;
+            min-width: 300px;
+        }
+        .mock-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            position: relative;
+        }
+        .mock-scenario {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>教程页面宽度匹配测试</h1>
+
+        <div class="test-section">
+            <h2>1. 主游戏页面宽度参考</h2>
+            <div class="mock-container">
+                <span class="width-indicator">max-width: 800px</span>
+                <h3>📊 反诈先锋游戏</h3>
+                <div class="mock-scenario">
+                    <h4>场景标题</h4>
+                    <p>这是一个模拟的游戏场景内容，用来展示主游戏页面的宽度。</p>
+                    <button style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px;">选择答案</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>2. 教程页面宽度测试</h2>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <h3>教程菜单页面</h3>
+                    <div class="tutorial-menu" style="margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                        <span class="width-indicator">max-width: 800px</span>
+                        <h2>📚 反诈先锋教程</h2>
+                        <p>系统学习电信诈骗防范知识，保护自己和他人的财产安全</p>
+
+                        <div class="tutorial-cards">
+                            <div class="tutorial-card">
+                                <h3>💔 第一章：惨痛案例</h3>
+                                <p>真实案例警示，了解诈骗造成的严重后果</p>
+                            </div>
+                            <div class="tutorial-card">
+                                <h3>👥 第二章：目标人群</h3>
+                                <p>了解易被诈骗的人群特征和心理因素</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. 教程内容页面测试</h2>
+            <div class="tutorial-content" style="margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <span class="width-indicator">max-width: 800px</span>
+                <h2>💔 电信诈骗的惨痛案例</h2>
+                <h3>真实案例警示录</h3>
+                <p>通过真实案例了解电信诈骗的危害，提高警惕性。</p>
+
+                <div class="cases-container">
+                    <div class="case-study">
+                        <h4>案例一：大学生被骗光学费</h4>
+                        <p><strong>案例描述：</strong>某大学生接到'教育局'电话，声称其助学金账户异常，需要转账验证。学生按照指示操作，被骗走全部学费12000元。</p>
+                        <p class="loss-amount">经济损失：12000元</p>
+                        <p class="lesson-learned">教训：教育局不会通过电话要求学生转账操作</p>
+                        <span class="case-type">类型：电话诈骗</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. 响应式测试</h2>
+            <p>请调整浏览器窗口大小来测试响应式效果：</p>
+            <ul>
+                <li>桌面端：所有容器应该有相同的最大宽度 (800px)</li>
+                <li>平板端：宽度应该自适应，保持合适的内边距</li>
+                <li>手机端：应该显示为单列布局，宽度为95vw</li>
+            </ul>
+
+            <button onclick="checkWidths()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; margin: 10px 0;">
+                检查当前宽度
+            </button>
+            <div id="width-results"></div>
+        </div>
+    </div>
+
+    <script>
+        function checkWidths() {
+            const elements = document.querySelectorAll('.mock-container, .tutorial-menu, .tutorial-content');
+            const results = document.getElementById('width-results');
+
+            results.innerHTML = '<h4>当前宽度检测结果：</h4>';
+
+            elements.forEach((el, index) => {
+                const computedStyle = window.getComputedStyle(el);
+                const width = computedStyle.width;
+                const maxWidth = computedStyle.maxWidth;
+                const padding = computedStyle.padding;
+
+                const resultDiv = document.createElement('div');
+                resultDiv.style.cssText = 'margin: 5px 0; padding: 5px; background: #f8f9fa; border-left: 3px solid #007bff;';
+                resultDiv.innerHTML = `
+                    <strong>${el.classList.contains('mock-container') ? '主游戏容器' :
+                              el.classList.contains('tutorial-menu') ? '教程菜单' : '教程内容'}:</strong>
+                    实际宽度: ${width}, 最大宽度: ${maxWidth}, 内边距: ${padding}
+                `;
+                results.appendChild(resultDiv);
+            });
+        }
+
+        // 页面加载完成后自动检查一次
+        window.addEventListener('load', () => {
+            setTimeout(checkWidths, 1000);
+        });
+
+        // 窗口大小改变时重新检查
+        window.addEventListener('resize', () => {
+            clearTimeout(window.resizeTimer);
+            window.resizeTimer = setTimeout(checkWidths, 300);
+        });
+    </script>
+</body>
+</html>

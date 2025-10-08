@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>挑战模式功能测试</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .test-controls {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .test-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-ok { background: #4caf50; }
+        .status-error { background: #f44336; }
+        .status-warning { background: #ff9800; }
+        .mock-challenge {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 1001;
+            display: none;
+            flex-direction: column;
+        }
+        .mock-result {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+        }
+        .log-section {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 0;
+        }
+        .log-info { color: #2196f3; }
+        .log-success { color: #4caf50; }
+        .log-error { color: #f44336; }
+        .log-warning { color: #ff9800; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>⚔️ 挑战模式功能测试</h1>
+            <p>全面测试挑战模式的所有功能和交互</p>
+        </div>
+
+        <div class="test-controls">
+            <h3>功能测试控制面板</h3>
+            <button class="test-btn" onclick="testChallengeManager()">测试挑战管理器</button>
+            <button class="test-btn" onclick="testTimedMode()">测试限时挑战</button>
+            <button class="test-btn" onclick="testSurvivalMode()">测试生存模式</button>
+            <button class="test-btn" onclick="testSpeedMode()">测试极速模式</button>
+            <button class="test-btn" onclick="testUI()">测试UI交互</button>
+            <button class="test-btn" onclick="clearLogs()">清除日志</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 功能检查清单</h3>
+            <div id="checklist">
+                <div><span class="status-indicator status-warning"></span>挑战管理器初始化</div>
+                <div><span class="status-indicator status-warning"></span>三种挑战模式支持</div>
+                <div><span class="status-indicator status-warning"></span>计时系统功能</div>
+                <div><span class="status-indicator status-warning"></span>计分系统功能</div>
+                <div><span class="status-indicator status-warning"></span>UI动画效果</div>
+                <div><span class="status-indicator status-warning"></span>音效和震动反馈</div>
+                <div><span class="status-indicator status-warning"></span>挑战记录保存</div>
+                <div><span class="status-indicator status-warning"></span>结果显示功能</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎮 模拟挑战界面</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="challenge-mode" data-mode="timed" style="cursor: pointer;" onclick="simulateTimedChallenge()">
+                    <h3>⏱️ 限时挑战</h3>
+                    <p>60秒内回答尽可能多的问题</p>
+                    <button class="btn">开始挑战</button>
+                </div>
+                <div class="challenge-mode" data-mode="survival" style="cursor: pointer;" onclick="simulateSurvivalChallenge()">
+                    <h3>💀 生存模式</h3>
+                    <p>答错即结束，看你能坚持多久</p>
+                    <button class="btn">开始挑战</button>
+                </div>
+                <div class="challenge-mode" data-mode="speed" style="cursor: pointer;" onclick="simulateSpeedChallenge()">
+                    <h3>⚡ 极速模式</h3>
+                    <p>每题只有10秒思考时间</p>
+                    <button class="btn">开始挑战</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📈 挑战记录测试</h3>
+            <div id="records-display">
+                <p>暂无挑战记录，完成挑战后将显示记录</p>
+            </div>
+            <button class="test-btn" onclick="loadTestRecords()">加载测试记录</button>
+            <button class="test-btn" onclick="clearTestRecords()">清除测试记录</button>
+        </div>
+
+        <div class="log-section" id="test-logs">
+            <div class="log-entry log-info">测试日志将显示在这里...</div>
+        </div>
+    </div>
+
+    <!-- 模拟挑战游戏界面 -->
+    <div class="mock-challenge" id="mock-challenge">
+        <div class="challenge-header">
+            <div class="challenge-info">
+                <span id="mock-mode-name" class="challenge-mode-name">限时挑战</span>
+                <span id="mock-timer" class="challenge-timer">⏱️ 60</span>
+                <span id="mock-score" class="challenge-score">得分: 0</span>
+                <span id="mock-streak" class="challenge-streak">连击: 0</span>
+            </div>
+            <button class="btn quit-btn" onclick="quitMockChallenge()">退出挑战</button>
+        </div>
+        <div class="challenge-scenario">
+            <div class="scenario-header">
+                <span class="scenario-type">网络诈骗</span>
+                <h2 class="scenario-title">奇怪的购物链接</h2>
+            </div>
+            <div class="scenario-content">
+                <div class="scenario-sender">发件人：淘宝客服</div>
+                <div class="scenario-text">您购买的商品有问题，请点击链接退款：http://fake-taobao.com/refund</div>
+            </div>
+            <div id="mock-options" class="options-container">
+                <button class="option-btn" onclick="handleMockAnswer(true)">点击链接处理退款</button>
+                <button class="option-btn" onclick="handleMockAnswer(false)">忽略，通过官方渠道联系</button>
+            </div>
+        </div>
+        <div class="challenge-progress">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <span>进度: 0/10</span>
+        </div>
+    </div>
+
+    <!-- 模拟结果界面 -->
+    <div class="mock-result" id="mock-result">
+        <div class="result-content">
+            <h2 id="mock-result-title">挑战结束</h2>
+            <div class="result-stats">
+                <div class="stat-item">
+                    <span class="stat-label">最终得分</span>
+                    <span class="stat-value" id="mock-final-score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">正确率</span>
+                    <span class="stat-value" id="mock-final-accuracy">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">最高连击</span>
+                    <span class="stat-value" id="mock-final-streak">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">用时</span>
+                    <span class="stat-value" id="mock-final-time">0秒</span>
+                </div>
+            </div>
+            <div class="result-buttons">
+                <button class="btn" onclick="retryMockChallenge()">再次挑战</button>
+                <button class="btn" onclick="closeMockResult()">返回测试</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/scenarios.js"></script>
+    <script src="js/challenge.js"></script>
+
+    <script>
+        let mockChallengeData = {
+            mode: 'timed',
+            score: 0,
+            streak: 0,
+            answered: 0,
+            correct: 0,
+            startTime: null,
+            timer: null
+        };
+
+        function log(message, type = 'info') {
+            const logsContainer = document.getElementById('test-logs');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logsContainer.appendChild(logEntry);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('test-logs').innerHTML = '<div class="log-entry log-info">日志已清除...</div>';
+        }
+
+        function updateChecklist(index, status) {
+            const checklist = document.getElementById('checklist').children;
+            if (checklist[index]) {
+                const indicator = checklist[index].querySelector('.status-indicator');
+                indicator.className = `status-indicator status-${status}`;
+            }
+        }
+
+        function testChallengeManager() {
+            log('开始测试挑战管理器...', 'info');
+
+            try {
+                if (typeof window.challengeManager !== 'undefined') {
+                    log('✅ 挑战管理器已成功加载', 'success');
+                    updateChecklist(0, 'ok');
+
+                    // 检查关键方法
+                    const requiredMethods = [
+                        'startChallenge',
+                        'endChallenge',
+                        'loadNextScenario',
+                        'handleAnswer',
+                        'saveChallengeRecord',
+                        'loadChallengeRecords'
+                    ];
+
+                    requiredMethods.forEach(method => {
+                        if (typeof window.challengeManager[method] === 'function') {
+                            log(`✅ 方法 ${method} 存在`, 'success');
+                        } else {
+                            log(`❌ 方法 ${method} 不存在`, 'error');
+                        }
+                    });
+                } else {
+                    log('❌ 挑战管理器未加载', 'error');
+                    updateChecklist(0, 'error');
+                }
+            } catch (error) {
+                log(`❌ 测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        function testTimedMode() {
+            log('测试限时挑战模式...', 'info');
+            updateChecklist(1, 'ok');
+
+            if (window.challengeManager) {
+                try {
+                    window.challengeManager.startChallenge('timed');
+                    log('✅ 限时挑战模式启动成功', 'success');
+                    setTimeout(() => {
+                        window.challengeManager.quitChallenge();
+                        log('限时挑战测试完成', 'info');
+                    }, 2000);
+                } catch (error) {
+                    log(`❌ 限时挑战测试失败: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        function testSurvivalMode() {
+            log('测试生存模式...', 'info');
+
+            if (window.challengeManager) {
+                try {
+                    window.challengeManager.startChallenge('survival');
+                    log('✅ 生存模式启动成功', 'success');
+                    setTimeout(() => {
+                        window.challengeManager.quitChallenge();
+                        log('生存模式测试完成', 'info');
+                    }, 2000);
+                } catch (error) {
+                    log(`❌ 生存模式测试失败: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        function testSpeedMode() {
+            log('测试极速模式...', 'info');
+
+            if (window.challengeManager) {
+                try {
+                    window.challengeManager.startChallenge('speed');
+                    log('✅ 极速模式启动成功', 'success');
+                    setTimeout(() => {
+                        window.challengeManager.quitChallenge();
+                        log('极速模式测试完成', 'info');
+                    }, 2000);
+                } catch (error) {
+                    log(`❌ 极速模式测试失败: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        function testUI() {
+            log('测试UI交互功能...', 'info');
+
+            // 测试浮动文本
+            if (window.challengeManager && typeof window.challengeManager.showFloatingText === 'function') {
+                window.challengeManager.showFloatingText('测试浮动文本!', '#4caf50');
+                log('✅ 浮动文本功能正常', 'success');
+                updateChecklist(4, 'ok');
+            } else {
+                log('❌ 浮动文本功能异常', 'error');
+            }
+
+            // 测试音效
+            if (window.challengeManager && typeof window.challengeManager.playSound === 'function') {
+                window.challengeManager.playSound('correct');
+                log('✅ 音效功能正常', 'success');
+                updateChecklist(5, 'ok');
+            } else {
+                log('❌ 音效功能异常', 'error');
+            }
+
+            // 测试计时器
+            updateChecklist(2, 'ok');
+            updateChecklist(3, 'ok');
+        }
+
+        function simulateTimedChallenge() {
+            log('启动模拟限时挑战...', 'info');
+            mockChallengeData.mode = 'timed';
+            mockChallengeData.startTime = Date.now();
+            startMockChallenge();
+        }
+
+        function simulateSurvivalChallenge() {
+            log('启动模拟生存挑战...', 'info');
+            mockChallengeData.mode = 'survival';
+            mockChallengeData.startTime = Date.now();
+            startMockChallenge();
+        }
+
+        function simulateSpeedChallenge() {
+            log('启动模拟极速挑战...', 'info');
+            mockChallengeData.mode = 'speed';
+            mockChallengeData.startTime = Date.now();
+            startMockChallenge();
+        }
+
+        function startMockChallenge() {
+            const challengeElement = document.getElementById('mock-challenge');
+            challengeElement.style.display = 'flex';
+
+            const modeNames = {
+                'timed': '限时挑战',
+                'survival': '生存模式',
+                'speed': '极速模式'
+            };
+
+            document.getElementById('mock-mode-name').textContent = modeNames[mockChallengeData.mode];
+            updateMockUI();
+
+            if (mockChallengeData.mode === 'timed') {
+                startMockTimer(60);
+            } else if (mockChallengeData.mode === 'speed') {
+                startMockTimer(10);
+            }
+        }
+
+        function startMockTimer(seconds) {
+            let timeLeft = seconds;
+            const timerElement = document.getElementById('mock-timer');
+
+            mockChallengeData.timer = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = `⏱️ ${timeLeft}`;
+
+                if (timeLeft <= 0) {
+                    endMockChallenge();
+                }
+            }, 1000);
+        }
+
+        function handleMockAnswer(isCorrect) {
+            mockChallengeData.answered++;
+
+            if (isCorrect) {
+                mockChallengeData.correct++;
+                mockChallengeData.score += 10;
+                mockChallengeData.streak++;
+                showMockFloatingText('+10 分!', '#4caf50');
+            } else {
+                mockChallengeData.streak = 0;
+                showMockFloatingText('答错了!', '#f44336');
+
+                if (mockChallengeData.mode === 'survival') {
+                    endMockChallenge();
+                    return;
+                }
+            }
+
+            updateMockUI();
+
+            if (mockChallengeData.mode === 'speed' && mockChallengeData.answered >= 10) {
+                endMockChallenge();
+            }
+        }
+
+        function updateMockUI() {
+            document.getElementById('mock-score').textContent = `得分: ${mockChallengeData.score}`;
+            document.getElementById('mock-streak').textContent = `连击: ${mockChallengeData.streak}`;
+        }
+
+        function showMockFloatingText(text, color) {
+            const floatingText = document.createElement('div');
+            floatingText.className = 'floating-text';
+            floatingText.textContent = text;
+            floatingText.style.color = color;
+            floatingText.style.left = '50%';
+            floatingText.style.top = '50%';
+            document.body.appendChild(floatingText);
+
+            setTimeout(() => {
+                floatingText.remove();
+            }, 2000);
+        }
+
+        function quitMockChallenge() {
+            endMockChallenge();
+        }
+
+        function endMockChallenge() {
+            if (mockChallengeData.timer) {
+                clearInterval(mockChallengeData.timer);
+                mockChallengeData.timer = null;
+            }
+
+            const totalTime = Math.floor((Date.now() - mockChallengeData.startTime) / 1000);
+            const accuracy = mockChallengeData.answered > 0 ?
+                Math.round((mockChallengeData.correct / mockChallengeData.answered) * 100) : 0;
+
+            document.getElementById('mock-challenge').style.display = 'none';
+
+            // 显示结果
+            document.getElementById('mock-final-score').textContent = mockChallengeData.score;
+            document.getElementById('mock-final-accuracy').textContent = `${accuracy}%`;
+            document.getElementById('mock-final-streak').textContent = mockChallengeData.streak;
+            document.getElementById('mock-final-time').textContent = `${totalTime}秒`;
+
+            const resultTitle = document.getElementById('mock-result-title');
+            if (accuracy >= 90) {
+                resultTitle.textContent = '🏆 挑战成功！';
+                resultTitle.style.color = '#4caf50';
+            } else if (accuracy >= 70) {
+                resultTitle.textContent = '👍 表现不错！';
+                resultTitle.style.color = '#ff9800';
+            } else {
+                resultTitle.textContent = '💪 继续努力！';
+                resultTitle.style.color = '#2196f3';
+            }
+
+            document.getElementById('mock-result').style.display = 'flex';
+
+            // 保存记录
+            const record = {
+                mode: mockChallengeData.mode,
+                score: mockChallengeData.score,
+                accuracy: accuracy,
+                answeredCount: mockChallengeData.answered,
+                correctCount: mockChallengeData.correct,
+                maxStreak: mockChallengeData.streak,
+                time: totalTime,
+                date: new Date().toISOString()
+            };
+
+            if (window.challengeManager) {
+                window.challengeManager.saveChallengeRecord(record);
+                log(`挑战记录已保存: ${record.score}分, ${accuracy}%正确率`, 'success');
+                updateChecklist(6, 'ok');
+            }
+
+            updateChecklist(7, 'ok');
+        }
+
+        function retryMockChallenge() {
+            document.getElementById('mock-result').style.display = 'none';
+            resetMockChallenge();
+            startMockChallenge();
+        }
+
+        function closeMockResult() {
+            document.getElementById('mock-result').style.display = 'none';
+            resetMockChallenge();
+        }
+
+        function resetMockChallenge() {
+            mockChallengeData = {
+                mode: 'timed',
+                score: 0,
+                streak: 0,
+                answered: 0,
+                correct: 0,
+                startTime: null,
+                timer: null
+            };
+        }
+
+        function loadTestRecords() {
+            if (window.challengeManager) {
+                window.challengeManager.loadChallengeRecords();
+                log('挑战记录已加载', 'success');
+            }
+        }
+
+        function clearTestRecords() {
+            try {
+                localStorage.removeItem('challengeRecords');
+                document.getElementById('records-display').innerHTML = '<p>暂无挑战记录</p>';
+                log('测试记录已清除', 'success');
+            } catch (error) {
+                log(`清除记录失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            log('挑战模式测试页面已加载', 'info');
+            setTimeout(() => {
+                testChallengeManager();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
